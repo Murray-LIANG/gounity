@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/host/instances?compact=true&fields=description,health,id,name,osType",
+            "response": "all.json"
+        },
+        {
+            "url": "/api/instances/host/Host_1?compact=true&fields=description,health,id,name,osType",
+            "response": "host_1.json"
+        }
+    ]
+}

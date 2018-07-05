@@ -1,0 +1,17 @@
+{
+    "content": {
+        "id": "Host_1",
+        "health": {
+            "value": 5,
+            "descriptionIds": [
+                "ALRT_COMPONENT_OK"
+            ],
+            "descriptions": [
+                "The component is operating normally. No action is required."
+            ]
+        },
+        "name": "host-1.emc.com",
+        "description": "",
+        "osType": "Other"
+    }
+}

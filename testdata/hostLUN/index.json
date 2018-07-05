@@ -1,0 +1,9 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/hostLUN/instances?compact=true&fields=hlu,host.id,id,isDefaultSnap,isReadOnly,lun.id,type&filter=host eq \"Host_1\" and lun eq \"sv_1\"",
+            "response": "host_1_sv_1_prod.json"
+        }
+
+    ]
+}

@@ -1,7 +1,7 @@
 package gounity
 
 import (
-	"context"
+	"reflect"
 	"strings"
 )
 
@@ -41,28 +41,18 @@ var (
 )
 
 func (u *Unity) GetLUNByID(id string) (*LUN, error) {
-	lunResp := &lunResp{}
-	err := u.client.Get(context.Background(), buildInstanceQueryURL("lun", id, fieldsLUN),
-		nil, lunResp)
-	if err != nil {
+	res := &LUN{}
+	if err := u.getInstanceByID("lun", id, fieldsLUN, res); err != nil {
 		return nil, err
 	}
-
-	return &lunResp.Content, nil
+	return res, nil
 }
 
 func (u *Unity) GetLUNs() ([]*LUN, error) {
-	lunsResp := &lunsResp{}
-	err := u.client.Get(context.Background(),
-		buildCollectionQueryURL("lun", fieldsLUN), nil, lunsResp)
+	collection, err := u.getCollection("lun", fieldsLUN, nil, reflect.TypeOf(LUN{}))
 	if err != nil {
 		return nil, err
 	}
-
-	res := []*LUN{}
-	for _, lunResp := range lunsResp.Entries {
-		res = append(res, &(lunResp.Content))
-	}
-
+	res := collection.([]*LUN)
 	return res, nil
 }

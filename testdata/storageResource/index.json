@@ -1,0 +1,46 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/storageResource/action/createLun",
+            "body": {
+                "name": "lun-gounity",
+                "lunParameters": {
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472
+                }
+            },
+            "response": "create_lun.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createLun",
+            "body": {
+                "name": "lun-name-exist-gounity",
+                "lunParameters": {
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472
+                }
+            },
+            "response": "create_lun_name_exist.json"
+        },
+        {
+            "url": "/api/instances/storageResource/sv_1/action/modifyLun",
+            "body": {
+                "lunParameters": {
+                    "hostAccess": [
+                        {
+                            "accessMask": 1,
+                            "host": {
+                                "id": "Host_1"
+                            }
+                        }
+                    ]
+                }
+            },
+            "response": "empty.json"
+        }
+    ]
+}

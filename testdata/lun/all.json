@@ -1,0 +1,138 @@
+{
+    "@base": "https://10.245.101.39/api/types/lun/instances?fields=description,health,hostAccess,id,isThinEnabled,metadataSize,metadataSizeAllocated,name,pool.id,sizeAllocated,sizeTotal,sizeUsed,snapCount,snapWwn,snapsSize,snapsSizeAllocated,wwn&per_page=2000&compact=true",
+    "updated": "2018-06-19T06:09:03.354Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "sv_1",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_VOL_OK"
+                    ],
+                    "descriptions": [
+                        "The LUN is operating normally. No action is required."
+                    ]
+                },
+                "name": "Lun1",
+                "description": "",
+                "sizeTotal": 107374182400,
+                "sizeAllocated": 0,
+                "isThinEnabled": true,
+                "wwn": "60:06:01:60:15:E0:3A:00:18:66:D0:5A:5B:25:8D:21",
+                "metadataSize": 8589934592,
+                "metadataSizeAllocated": 2684354560,
+                "snapWwn": "60:06:01:60:15:E0:3A:00:B8:E1:98:78:85:3D:43:F9",
+                "snapsSize": 0,
+                "snapsSizeAllocated": 0,
+                "snapCount": 1,
+                "pool": {
+                    "id": "pool_1"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "sv_3",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_VOL_OK"
+                    ],
+                    "descriptions": [
+                        "The LUN is operating normally. No action is required."
+                    ]
+                },
+                "name": "clone1-test",
+                "sizeTotal": 107374182400,
+                "sizeAllocated": 0,
+                "isThinEnabled": true,
+                "wwn": "60:06:01:60:15:E0:3A:00:A0:3E:D8:5A:C2:D5:2E:50",
+                "metadataSize": 0,
+                "metadataSizeAllocated": 0,
+                "snapWwn": "60:06:01:60:15:E0:3A:00:1C:AC:5D:F0:29:66:4C:B5",
+                "snapsSize": 0,
+                "snapsSizeAllocated": 0,
+                "snapCount": 1,
+                "pool": {
+                    "id": "pool_1"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "sv_16",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_VOL_OK"
+                    ],
+                    "descriptions": [
+                        "The LUN is operating normally. No action is required."
+                    ]
+                },
+                "name": "volume-33014ba4-33e7-4353-bf28-37f2e84c0dcf",
+                "description": "vol-ml-1",
+                "sizeTotal": 5368709120,
+                "sizeAllocated": 0,
+                "isThinEnabled": true,
+                "wwn": "60:06:01:60:15:E0:3A:00:F6:44:E9:5A:A2:CC:5C:26",
+                "metadataSize": 3489660928,
+                "metadataSizeAllocated": 2684354560,
+                "snapWwn": "60:06:01:60:15:E0:3A:00:49:D2:85:F2:EE:10:4D:DB",
+                "snapsSize": 0,
+                "snapsSizeAllocated": 0,
+                "snapCount": 0,
+                "pool": {
+                    "id": "pool_1"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "sv_17",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_VOL_OK"
+                    ],
+                    "descriptions": [
+                        "The LUN is operating normally. No action is required."
+                    ]
+                },
+                "name": "c1",
+                "description": "",
+                "sizeTotal": 107374182400,
+                "sizeAllocated": 0,
+                "isThinEnabled": true,
+                "wwn": "60:06:01:60:15:E0:3A:00:B4:BD:EF:5A:CD:91:44:46",
+                "metadataSize": 4294967296,
+                "metadataSizeAllocated": 2684354560,
+                "snapWwn": "60:06:01:60:15:E0:3A:00:A4:E5:68:D0:BB:F5:4A:F0",
+                "snapsSize": 0,
+                "snapsSizeAllocated": 0,
+                "hostAccess": [
+                    {
+                        "accessMask": 1,
+                        "productionAccess": 1,
+                        "snapshotAccess": 0,
+                        "instanceId": "root/emc:EMC_UEM_HostAccessLunAssocLeaf%InstanceID=10",
+                        "host": {
+                            "id": "Host_2"
+                        }
+                    }
+                ],
+                "snapCount": 0,
+                "pool": {
+                    "id": "pool_2"
+                }
+            }
+        }
+    ]
+}

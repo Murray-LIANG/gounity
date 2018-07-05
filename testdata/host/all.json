@@ -1,0 +1,80 @@
+{
+    "@base": "https://10.245.101.39/api/types/host/instances?fields=description,health,id,name,osType&per_page=2000&compact=true",
+    "updated": "2018-06-21T05:54:00.954Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "Host_1",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "host-1.emc.com",
+                "description": "",
+                "osType": "Other"
+            }
+        },
+        {
+            "content": {
+                "id": "Host_2",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "host-2.emc.com",
+                "description": "",
+                "osType": "VMware ESXi 6.0.0"
+            }
+        },
+        {
+            "content": {
+                "id": "Host_3",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "host3",
+                "description": "",
+                "osType": "Linux"
+            }
+        },
+        {
+            "content": {
+                "id": "Host_4",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "host4",
+                "description": "",
+                "osType": "Linux"
+            }
+        }
+    ]
+}

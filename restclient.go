@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -90,16 +89,12 @@ type RestClientOptions struct {
 	TraceHTTP bool
 }
 
-var (
-	errorEmptyHost = errors.New("missing Unity host")
-)
-
 // NewRestClient returns a new REST client to Unity.
 func NewRestClient(ctx context.Context, host, username, password string,
 	opts RestClientOptions) (RestClient, error) {
 
 	if host == "" {
-		return nil, errorEmptyHost
+		return nil, newGounityError("missing host")
 	}
 
 	cookieJar, err := cookiejar.New(
@@ -118,51 +113,6 @@ func NewRestClient(ctx context.Context, host, username, password string,
 		}
 	}
 	return c, nil
-}
-
-func (c *client) ParseUnityError(resp *http.Response) error {
-	unityError := &UnityError{}
-	if err := json.NewDecoder(resp.Body).Decode(unityError); err != nil {
-		return err
-	}
-	unityError.Message = unityError.Messages[0].Message
-
-	if unityError.Message == "" {
-		unityError.Message = resp.Status
-	}
-	return unityError
-}
-
-func (c *client) Do(ctx context.Context, method, path string, body,
-	resp interface{}) error {
-	return c.DoWithHeaders(ctx, method, path, nil, body, resp)
-}
-
-func (c *client) DoWithHeaders(ctx context.Context, method, path string,
-	headers map[string]string, body, resp interface{}) error {
-	rawResp, err := c.PingPong(ctx, method, path, headers, body)
-	if err != nil {
-		return err
-	}
-	defer rawResp.Body.Close()
-
-	switch {
-	case rawResp == nil:
-		return nil
-	case rawResp.StatusCode >= 200 && rawResp.StatusCode <= 299:
-		if resp == nil {
-			return nil
-		}
-		dec := json.NewDecoder(rawResp.Body)
-		if err = dec.Decode(resp); err != nil && err != io.EOF {
-			log.WithError(err).Error(
-				fmt.Sprintf("Unable to decode response into %+v", resp))
-			return err
-		}
-	default:
-		return c.ParseUnityError(rawResp)
-	}
-	return nil
 }
 
 func setDefaultContentType(header *http.Header, headers map[string]string,
@@ -238,20 +188,54 @@ func (c *client) doWithRetryOnce(ctx context.Context, req *http.Request) (*http.
 		}
 		req = req.WithContext(ctx)
 		resp, err := c.http.Do(req)
-		c.csrfToken = resp.Header.Get("EMC-CSRF-TOKEN")
+		if err != nil {
+			return nil, err
+		}
 		if c.traceHTTP {
 			traceResponse(ctx, resp)
 		}
-
-		if err != nil {
-			if resp.StatusCode != 401 {
-				return nil, err
-			}
-		} else {
-			return resp, nil
-		}
+		c.csrfToken = resp.Header.Get("EMC-CSRF-TOKEN")
+		return resp, nil
 	}
 	return nil, err
+}
+
+func (c *client) DoWithHeaders(ctx context.Context, method, path string,
+	headers map[string]string, body, resp interface{}) error {
+	rawResp, err := c.PingPong(ctx, method, path, headers, body)
+	if err != nil {
+		return err
+	}
+	defer rawResp.Body.Close()
+
+	switch {
+	case rawResp == nil:
+		return nil
+	case rawResp.StatusCode >= 200 && rawResp.StatusCode <= 299:
+		if resp == nil {
+			return nil
+		}
+		dec := json.NewDecoder(rawResp.Body)
+		if err = dec.Decode(resp); err != nil && err != io.EOF {
+			log.WithError(err).Error(
+				fmt.Sprintf("unable to decode response into %+v", resp))
+			return err
+		}
+	default:
+		unityError, err := parseUnityError(rawResp.Body)
+		if err != nil {
+			log.WithError(err).Error(
+				fmt.Sprintf("unable to decode response into unity error"))
+			return err
+		}
+		return unityError
+	}
+	return nil
+}
+
+func (c *client) Do(ctx context.Context, method, path string, body,
+	resp interface{}) error {
+	return c.DoWithHeaders(ctx, method, path, nil, body, resp)
 }
 
 func (c *client) Get(ctx context.Context, path string, headers map[string]string,

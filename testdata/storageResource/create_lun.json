@@ -1,0 +1,15 @@
+{
+    "@base": "https://10.245.101.39/api/types/storageResource/action/createLun",
+    "updated": "2018-06-19T08:07:21.345Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "/sv_1"
+        }
+    ],
+    "content": {
+        "storageResource": {
+            "id": "sv_1"
+        }
+    }
+}
