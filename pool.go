@@ -20,6 +20,7 @@ var (
 	}, ",")
 )
 
+// GetPoolByID retrives the pool by given its ID.
 func (u *Unity) GetPoolByID(id string) (*Pool, error) {
 	res := &Pool{}
 	if err := u.getInstanceByID("pool", id, fieldsPool, res); err != nil {
@@ -28,6 +29,7 @@ func (u *Unity) GetPoolByID(id string) (*Pool, error) {
 	return res, nil
 }
 
+// GetPools retrives all pools.
 func (u *Unity) GetPools() ([]*Pool, error) {
 	collection, err := u.getCollection("pool", fieldsPool, nil, reflect.TypeOf(Pool{}))
 	if err != nil {
@@ -37,10 +39,11 @@ func (u *Unity) GetPools() ([]*Pool, error) {
 	return res, nil
 }
 
+// CreateLUN creates a new LUN on the pool.
 func (p *Pool) CreateLUN(name string, sizeGB uint64) (*LUN, error) {
 	lunParams := map[string]interface{}{
 		"pool": represent(p),
-		"size": GBToBytes(sizeGB),
+		"size": gbToBytes(sizeGB),
 	}
 	body := map[string]interface{}{
 		"name":          name,
@@ -60,11 +63,9 @@ func (p *Pool) CreateLUN(name string, sizeGB uint64) (*LUN, error) {
 	createdID := resp.Content.StorageResource.ID
 	logger.WithField("createdLunID", createdID).Debug("lun created")
 
-	if createdLUN, err := p.Unity.GetLUNByID(createdID); err != nil {
+	createdLUN, err := p.Unity.GetLUNByID(createdID)
+	if err != nil {
 		logger.WithError(err).Error("failed to get the created lun")
-		return nil, err
-	} else {
-		return createdLUN, nil
 	}
-
+	return createdLUN, err
 }

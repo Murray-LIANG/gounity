@@ -16,11 +16,12 @@ var (
 	traceHTTP, _ = strconv.ParseBool(os.Getenv("GOUNITY_TRACEHTTP"))
 )
 
+// Unity defines the connection to Unity system.
 type Unity struct {
 	client RestClient
 }
 
-// UnitySystem represents a Unity storage
+// Storage defines a Unity system.
 type Storage interface {
 	GetPools() ([]*Pool, error)
 	GetPoolById(id string) (*Pool, error)
@@ -31,6 +32,7 @@ type Storage interface {
 	GetLUNByName(name string) (*LUN, error)
 }
 
+// NewUnity creates a connection to a Unity system.
 func NewUnity(mgmtIP, username, password string, insecure bool) (*Unity, error) {
 
 	fields := map[string]interface{}{

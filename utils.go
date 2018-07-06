@@ -55,8 +55,8 @@ func traceResponse(ctx context.Context, resp *http.Response) {
 }
 
 const (
-	API_TYPES     = "api/types"
-	API_INSTANCES = "api/instances"
+	pathAPITypes     = "api/types"
+	pathAPIInstances = "api/instances"
 )
 
 func buildURL(baseURL, fields string, filter *filter) string {
@@ -78,20 +78,20 @@ func buildURL(baseURL, fields string, filter *filter) string {
 }
 
 func queryCollectionURL(res, fields string, filter *filter) string {
-	return buildURL(strings.Join([]string{API_TYPES, res, "instances"}, "/"), fields,
+	return buildURL(strings.Join([]string{pathAPITypes, res, "instances"}, "/"), fields,
 		filter)
 }
 
 func queryInstanceURL(res, id, fields string) string {
-	return buildURL(strings.Join([]string{API_INSTANCES, res, id}, "/"), fields, nil)
+	return buildURL(strings.Join([]string{pathAPIInstances, res, id}, "/"), fields, nil)
 }
 
 func postCollectionURL(res, action string) string {
-	return strings.Join([]string{API_TYPES, res, "action", action}, "/")
+	return strings.Join([]string{pathAPITypes, res, "action", action}, "/")
 }
 
 func postInstanceURL(res, id, action string) string {
-	return strings.Join([]string{API_INSTANCES, res, id, "action", action}, "/")
+	return strings.Join([]string{pathAPIInstances, res, id, "action", action}, "/")
 }
 
 func parseUnityError(reader io.Reader) (*UnityError, error) {
@@ -250,7 +250,7 @@ func extractIP(url string) string {
 	return strings.Split(url, "/")[2]
 }
 
-func GBToBytes(gb uint64) uint64 {
+func gbToBytes(gb uint64) uint64 {
 	return gb * 1024 * 1024 * 1024
 }
 

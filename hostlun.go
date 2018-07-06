@@ -20,6 +20,7 @@ var (
 	}, ",")
 )
 
+// FilterHostLUN filters the `HostLUN` by given its host ID and LUN ID.
 func (u *Unity) FilterHostLUN(hostID, lunID string) (*HostLUN, error) {
 	filter := newFilter(fmt.Sprintf(`host eq "%s"`, hostID)).and(
 		fmt.Sprintf(`lun eq "%s"`, lunID))

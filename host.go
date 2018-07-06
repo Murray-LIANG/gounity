@@ -18,6 +18,7 @@ var (
 	}, ",")
 )
 
+// GetHostByID retrives the host by given its ID.
 func (u *Unity) GetHostByID(id string) (*Host, error) {
 	res := &Host{}
 	if err := u.getInstanceByID("host", id, fieldsHost, res); err != nil {
@@ -26,6 +27,7 @@ func (u *Unity) GetHostByID(id string) (*Host, error) {
 	return res, nil
 }
 
+// GetHosts retrives all the hosts.
 func (u *Unity) GetHosts() ([]*Host, error) {
 	collection, err := u.getCollection("host", fieldsHost, nil, reflect.TypeOf(Host{}))
 	if err != nil {
@@ -35,10 +37,11 @@ func (u *Unity) GetHosts() ([]*Host, error) {
 	return res, nil
 }
 
+// Attach attaches the LUN to the host.
 func (h *Host) Attach(lun *LUN) (uint16, error) {
 	hostAccess := []interface{}{
 		map[string]interface{}{"host": represent(h),
-			"accessMask": HostLUNAccess_PRODUCTION},
+			"accessMask": HostLUNAccessProduction},
 	}
 	for _, exist := range lun.HostAccess {
 		hostAccess = append(hostAccess,

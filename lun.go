@@ -40,6 +40,7 @@ var (
 	}, ",")
 )
 
+// GetLUNByID retrives the LUN by given its ID.
 func (u *Unity) GetLUNByID(id string) (*LUN, error) {
 	res := &LUN{}
 	if err := u.getInstanceByID("lun", id, fieldsLUN, res); err != nil {
@@ -48,6 +49,7 @@ func (u *Unity) GetLUNByID(id string) (*LUN, error) {
 	return res, nil
 }
 
+// GetLUNs retrives all LUNs.
 func (u *Unity) GetLUNs() ([]*LUN, error) {
 	collection, err := u.getCollection("lun", fieldsLUN, nil, reflect.TypeOf(LUN{}))
 	if err != nil {

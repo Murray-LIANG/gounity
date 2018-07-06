@@ -17,8 +17,11 @@ import (
 )
 
 const (
-	HeaderKeyContentType                    = "Content-Type"
-	HeaderValueContentTypeJSON              = "application/json"
+	// HeaderKeyContentType is key name of `Content-Type`.
+	HeaderKeyContentType = "Content-Type"
+	// HeaderValueContentTypeJSON is `json` value of `Content-Type`.
+	HeaderValueContentTypeJSON = "application/json"
+	// HeaderValueContentTypeBinaryOctetStream is `binary` value of `Content-Type`.
 	HeaderValueContentTypeBinaryOctetStream = "binary/octet-stream"
 )
 
@@ -84,7 +87,7 @@ type client struct {
 
 // RestClientOptions are options for the REST client.
 type RestClientOptions struct {
-	// Insecure indicates whether or not to supress SSL errors.
+	// Insecure indicates whether or not to suppress SSL errors.
 	Insecure  bool
 	TraceHTTP bool
 }

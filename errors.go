@@ -6,8 +6,10 @@ import (
 )
 
 const (
+	// UnityResourceNotFoundErrorCode is error code for resource not found.
 	UnityResourceNotFoundErrorCode = 131149829
-	UnityLunNameExistErrorCode     = 108007744
+	// UnityLunNameExistErrorCode is error code for LUN name existing.
+	UnityLunNameExistErrorCode = 108007744
 )
 
 type gounityError struct {
