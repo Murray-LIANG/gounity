@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/pool/instances?compact=true&fields=description,health,id,name,sizeFree,sizeTotal,sizeUsed",
+            "response": "all.json"
+        },
+        {
+            "url": "/api/instances/pool/pool_1?compact=true&fields=description,health,id,name,sizeFree,sizeTotal,sizeUsed",
+            "response": "pool_1.json"
+        }
+    ]
+}

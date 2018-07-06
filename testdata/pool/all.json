@@ -1,0 +1,88 @@
+{
+    "@base": "https://10.245.101.39/api/types/pool/instances?fields=description,health,id,name,sizeFree,sizeTotal,sizeUsed&per_page=2000&compact=true",
+    "updated": "2018-06-19T06:36:12.881Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "pool_1",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "Manila_Pool",
+                "description": "",
+                "sizeFree": 2350152417280,
+                "sizeTotal": 2359547658240,
+                "sizeUsed": 9395240960
+            }
+        },
+        {
+            "content": {
+                "id": "pool_2",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "Cinder_Pool",
+                "description": "",
+                "sizeFree": 1882537852928,
+                "sizeTotal": 1900523028480,
+                "sizeUsed": 17985175552
+            }
+        },
+        {
+            "content": {
+                "id": "pool_7",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "puppet_pool",
+                "description": "created by puppet module",
+                "sizeFree": 7810398027776,
+                "sizeTotal": 7873748795392,
+                "sizeUsed": 63350767616
+            }
+        },
+        {
+            "content": {
+                "id": "pool_9",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                },
+                "name": "Flash_Pool",
+                "description": "",
+                "sizeFree": 176362094592,
+                "sizeTotal": 193273528320,
+                "sizeUsed": 16911433728
+            }
+        }
+    ]
+}

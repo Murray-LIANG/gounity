@@ -1,0 +1,16 @@
+{
+    "indices": [
+        {
+            "url": "/api/instances/lun/sv_1?compact=true&fields=description,health,hostAccess,id,isThinEnabled,metadataSize,metadataSizeAllocated,name,pool.id,sizeAllocated,sizeTotal,sizeUsed,snapCount,snapWwn,snapsSize,snapsSizeAllocated,wwn",
+            "response": "sv_1.json"
+        },
+        {
+            "url": "/api/instances/lun/sv_2?compact=true&fields=description,health,hostAccess,id,isThinEnabled,metadataSize,metadataSizeAllocated,name,pool.id,sizeAllocated,sizeTotal,sizeUsed,snapCount,snapWwn,snapsSize,snapsSizeAllocated,wwn",
+            "response": "not_found.json"
+        },
+        {
+            "url": "/api/types/lun/instances?compact=true&fields=description,health,hostAccess,id,isThinEnabled,metadataSize,metadataSizeAllocated,name,pool.id,sizeAllocated,sizeTotal,sizeUsed,snapCount,snapWwn,snapsSize,snapsSizeAllocated,wwn",
+            "response": "all.json"
+        }
+    ]
+}

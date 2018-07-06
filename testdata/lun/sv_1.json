@@ -1,0 +1,29 @@
+{
+    "content": {
+        "id": "sv_1",
+        "health": {
+            "value": 5,
+            "descriptionIds": [
+                "ALRT_VOL_OK"
+            ],
+            "descriptions": [
+                "The LUN is operating normally. No action is required."
+            ]
+        },
+        "name": "Lun1",
+        "description": "",
+        "sizeTotal": 107374182400,
+        "sizeAllocated": 0,
+        "isThinEnabled": true,
+        "wwn": "60:06:01:60:15:E0:3A:00:18:66:D0:5A:5B:25:8D:21",
+        "metadataSize": 8589934592,
+        "metadataSizeAllocated": 2684354560,
+        "snapWwn": "60:06:01:60:15:E0:3A:00:B8:E1:98:78:85:3D:43:F9",
+        "snapsSize": 0,
+        "snapsSizeAllocated": 0,
+        "snapCount": 1,
+        "pool": {
+            "id": "pool_1"
+        }
+    }
+}
