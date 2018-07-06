@@ -7,8 +7,8 @@ go:
 
 before_install:
   - go get -t -v ./...
-  - go get github.com/mattn/goveralls
-  - go get golang.org/x/tools/cmd/cover
+  - go get -v github.com/mattn/goveralls
+  - go get -v golang.org/x/tools/cmd/cover
 
 script:
   - go test -coverprofile=coverage.txt
