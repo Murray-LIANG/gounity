@@ -54,18 +54,18 @@ if err != nil {
 pools, err := unity.GetPools()
 
 // Get the pool by ID
-pool, err := unity.GetPoolByID("Pool_1")
+pool, err := unity.GetPoolById("Pool_1")
 ```
 
 ### Create LUNs
 ```go
 // Create a 3GB LUN named `lunName` on `pool`
-lun, err := pool.CreateLUN("lunName", 3)
+lun, err := pool.CreateLun("lunName", 3)
 ```
 
 ### Query Hosts
 ```go
-host, err := unity.GetHostByID("Host_1")
+host, err := unity.GetHostById("Host_1")
 ```
 
 ### Attach LUNs to Hosts
