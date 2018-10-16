@@ -2,6 +2,7 @@ package gounity
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"strings"
 
@@ -68,4 +69,12 @@ func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 		logger.WithError(err).Error("failed to get the created lun")
 	}
 	return createdLUN, err
+}
+
+func (u *Unity) GetPoolById(id string) (*Pool, error) {
+	return nil, errors.New("Not Implemented.")
+}
+
+func (u *Unity) GetPoolByName(id string) (*Pool, error) {
+	return nil, errors.New("Not Implemented.")
 }

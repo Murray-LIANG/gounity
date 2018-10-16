@@ -1,6 +1,7 @@
 package gounity
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -57,4 +58,8 @@ func (u *Unity) GetLuns() ([]*Lun, error) {
 	}
 	res := collection.([]*Lun)
 	return res, nil
+}
+
+func (u *Unity) GetLunByName(name string) (*Lun, error) {
+	return nil, errors.New("Not Implemented!")
 }
