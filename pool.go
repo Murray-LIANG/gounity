@@ -20,7 +20,7 @@ var (
 	}, ",")
 )
 
-// GetPoolByID retrives the pool by given its ID.
+// GetPoolByID retrives the pool by given its Id.
 func (u *Unity) GetPoolByID(id string) (*Pool, error) {
 	res := &Pool{}
 	if err := u.getInstanceByID("pool", id, fieldsPool, res); err != nil {
@@ -39,8 +39,8 @@ func (u *Unity) GetPools() ([]*Pool, error) {
 	return res, nil
 }
 
-// CreateLUN creates a new LUN on the pool.
-func (p *Pool) CreateLUN(name string, sizeGB uint64) (*LUN, error) {
+// CreateLun creates a new Lun on the pool.
+func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 	lunParams := map[string]interface{}{
 		"pool": represent(p),
 		"size": gbToBytes(sizeGB),
@@ -54,16 +54,16 @@ func (p *Pool) CreateLUN(name string, sizeGB uint64) (*LUN, error) {
 
 	resp := &storageResourceCreateResp{}
 	if err := p.Unity.client.Post(context.Background(),
-		postCollectionURL("storageResource", "createLun"), nil, body, resp); err != nil {
+		postCollectionUrl("storageResource", "createLun"), nil, body, resp); err != nil {
 
 		logger.WithError(err).Error("failed to create lun")
 		return nil, err
 	}
 
-	createdID := resp.Content.StorageResource.ID
+	createdID := resp.Content.StorageResource.Id
 	logger.WithField("createdLunID", createdID).Debug("lun created")
 
-	createdLUN, err := p.Unity.GetLUNByID(createdID)
+	createdLUN, err := p.Unity.GetLunById(createdID)
 	if err != nil {
 		logger.WithError(err).Error("failed to get the created lun")
 	}

@@ -18,8 +18,8 @@ var (
 	}, ",")
 )
 
-// GetHostByID retrives the host by given its ID.
-func (u *Unity) GetHostByID(id string) (*Host, error) {
+// GetHostById retrives the host by given its Id.
+func (u *Unity) GetHostById(id string) (*Host, error) {
 	res := &Host{}
 	if err := u.getInstanceByID("host", id, fieldsHost, res); err != nil {
 		return nil, err
@@ -37,11 +37,11 @@ func (u *Unity) GetHosts() ([]*Host, error) {
 	return res, nil
 }
 
-// Attach attaches the LUN to the host.
-func (h *Host) Attach(lun *LUN) (uint16, error) {
+// Attach attaches the Lun to the host.
+func (h *Host) Attach(lun *Lun) (uint16, error) {
 	hostAccess := []interface{}{
 		map[string]interface{}{"host": represent(h),
-			"accessMask": HostLUNAccessProduction},
+			"accessMask": HostLunAccessProduction},
 	}
 	for _, exist := range lun.HostAccess {
 		hostAccess = append(hostAccess,
@@ -58,14 +58,14 @@ func (h *Host) Attach(lun *LUN) (uint16, error) {
 	logger.Debug("attacthing lun to host")
 
 	if err := h.Unity.client.Post(context.Background(),
-		postInstanceURL("storageResource", lun.ID, "modifyLun"), nil, body,
+		postInstanceUrl("storageResource", lun.Id, "modifyLun"), nil, body,
 		nil); err != nil {
 
 		logger.WithError(err).Error("failed to attach lun to host")
 		return 0, err
 	}
 
-	hostLun, err := h.Unity.FilterHostLUN(h.ID, lun.ID)
+	hostLun, err := h.Unity.FilterHostLUN(h.Id, lun.Id)
 	if err != nil {
 		return 0, err
 	}

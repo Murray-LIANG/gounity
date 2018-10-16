@@ -10,7 +10,7 @@ type UnityErrorMessage struct {
 // UnityError defines the error struct returned by Unity.
 type UnityError struct {
 	ErrorCode      int                 `json:"errorCode"`
-	HTTPStatusCode int                 `json:"httpStatusCode"`
+	HttpStatusCode int                 `json:"httpStatusCode"`
 	Messages       []UnityErrorMessage `json:"messages"`
 	Message        string
 }
@@ -29,9 +29,9 @@ type storageResourceCreateResp struct {
 	} `json:"content"`
 }
 
-// StorageResource defines Unity corresponding storage resource(like pool, LUN .etc).
+// StorageResource defines Unity corresponding storage resource(like pool, Lun .etc).
 type StorageResource struct {
-	ID string `json:"id"`
+	Id string `json:"id"`
 }
 
 type instanceResp struct {
@@ -45,7 +45,7 @@ type collectionResp struct {
 // Pool defines Unity corresponding `pool` type.
 type Pool struct {
 	Unity       *Unity `json:"-"`
-	ID          string `json:"id"`
+	Id          string `json:"id"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	SizeFree    uint64 `json:"sizeFree,omitempty"`
@@ -53,13 +53,13 @@ type Pool struct {
 	SizeUsed    uint64 `json:"sizeUsed,omitempty"`
 }
 
-// LUN defines Unity corresponding `lun` type.
-type LUN struct {
+// Lun defines Unity corresponding `lun` type.
+type Lun struct {
 	Unity                 *Unity             `json:"-"`
 	Description           string             `json:"description"`
 	Health                *Health            `json:"health,omitempty"`
 	HostAccess            []*BlockHostAccess `json:"hostAccess,omitempty"`
-	ID                    string             `json:"id"`
+	Id                    string             `json:"id"`
 	IsThinEnabled         bool               `json:"isThinEnabled"`
 	MetadataSize          uint64             `json:"metadataSize"`
 	MetadataSizeAllocated uint64             `json:"metadataSizeAllocated"`
@@ -82,30 +82,30 @@ type Health struct {
 	Descriptions   []string `json:"descriptions"`
 }
 
-// HostLUNAccessEnum defines Unity corresponding `HostLUNAccessEnum` enumeration.
-type HostLUNAccessEnum int
+// HostLunAccessEnum defines Unity corresponding `HostLunAccessEnum` enumeration.
+type HostLunAccessEnum int
 
 const (
-	// HostLUNAccessNoAccess defines `NoAccess` value of HostLUNAccessEnum.
-	HostLUNAccessNoAccess HostLUNAccessEnum = iota
+	// HostLUNAccessNoAccess defines `NoAccess` value of HostLunAccessEnum.
+	HostLUNAccessNoAccess HostLunAccessEnum = iota
 
-	// HostLUNAccessProduction defines `Production` value of HostLUNAccessEnum.
-	HostLUNAccessProduction
+	// HostLunAccessProduction defines `Production` value of HostLunAccessEnum.
+	HostLunAccessProduction
 
-	// HostLUNAccessSnapshot defines `Snapshot` value of HostLUNAccessEnum.
+	// HostLUNAccessSnapshot defines `Snapshot` value of HostLunAccessEnum.
 	HostLUNAccessSnapshot
 
-	// HostLUNAccessBoth defines `Both` value of HostLUNAccessEnum.
+	// HostLUNAccessBoth defines `Both` value of HostLunAccessEnum.
 	HostLUNAccessBoth
 
-	// HostLUNAccessMixed defines `Mixed` value of HostLUNAccessEnum.
+	// HostLUNAccessMixed defines `Mixed` value of HostLunAccessEnum.
 	HostLUNAccessMixed // TODO(ryan) Mixed = 0xffff
 )
 
 // Host defines Unity corresponding `host` type.
 type Host struct {
 	Unity       *Unity
-	ID          string  `json:"id"`
+	Id          string  `json:"id"`
 	Name        string  `json:"name"`
 	Health      *Health `json:"health,omitempty"`
 	Description string  `json:"description"`
@@ -115,30 +115,30 @@ type Host struct {
 // BlockHostAccess defines Unity corresponding `blockHostAccess` type.
 type BlockHostAccess struct {
 	Host       *Host             `json:"host,omitempty"`
-	AccessMask HostLUNAccessEnum `json:"accessMask"`
+	AccessMask HostLunAccessEnum `json:"accessMask"`
 }
 
-// HostLUNTypeEnum defines Unity corresponding `HostLUNTypeEnum` enumeration.
-type HostLUNTypeEnum int
+// HostLunTypeEnum defines Unity corresponding `HostLunTypeEnum` enumeration.
+type HostLunTypeEnum int
 
 const (
-	// HostLUNTypeUnknown defines `Unknown` value of HostLUNTypeEnum.
-	HostLUNTypeUnknown HostLUNTypeEnum = iota
+	// HostLUNTypeUnknown defines `Unknown` value of HostLunTypeEnum.
+	HostLUNTypeUnknown HostLunTypeEnum = iota
 
-	// HostLUNTypeLUN defines `LUN` value of HostLUNTypeEnum.
+	// HostLUNTypeLUN defines `Lun` value of HostLunTypeEnum.
 	HostLUNTypeLUN
 
-	// HostLUNTypeSnap defines `Snap` value of HostLUNTypeEnum.
+	// HostLUNTypeSnap defines `Snap` value of HostLunTypeEnum.
 	HostLUNTypeSnap
 )
 
-// HostLUN defines Unity corresponding `HostLUN` type.
-type HostLUN struct {
-	ID            string          `json:"id"`
+// HostLun defines Unity corresponding `HostLun` type.
+type HostLun struct {
+	Id            string          `json:"id"`
 	Host          *Host           `json:"host"`
-	Type          HostLUNTypeEnum `json:"type"`
+	Type          HostLunTypeEnum `json:"type"`
 	Hlu           uint16          `json:"hlu"`
-	LUN           *LUN            `json:"lun"`
+	Lun           *Lun            `json:"lun"`
 	IsReadOnly    bool            `json:"isReadOnly"`
 	IsDefaultSnap bool            `json:"isDefaultSnap"`
 }

@@ -20,16 +20,16 @@ var (
 	}, ",")
 )
 
-// FilterHostLUN filters the `HostLUN` by given its host ID and LUN ID.
-func (u *Unity) FilterHostLUN(hostID, lunID string) (*HostLUN, error) {
+// FilterHostLUN filters the `HostLun` by given its host Id and Lun Id.
+func (u *Unity) FilterHostLUN(hostID, lunID string) (*HostLun, error) {
 	filter := newFilter(fmt.Sprintf(`host eq "%s"`, hostID)).and(
 		fmt.Sprintf(`lun eq "%s"`, lunID))
 	collection, err := u.getCollection("hostLUN", fieldsHostLUN, filter,
-		reflect.TypeOf(HostLUN{}))
+		reflect.TypeOf(HostLun{}))
 	if err != nil {
 		return nil, err
 	}
-	res := collection.([]*HostLUN)
+	res := collection.([]*HostLun)
 	if len(res) == 0 {
 		log.WithField("hostID", hostID).WithField("lunID",
 			lunID).Info("filter returns 0 hostLUN")

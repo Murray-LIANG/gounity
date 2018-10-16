@@ -40,21 +40,21 @@ var (
 	}, ",")
 )
 
-// GetLUNByID retrives the LUN by given its ID.
-func (u *Unity) GetLUNByID(id string) (*LUN, error) {
-	res := &LUN{}
+// GetLunById retrives the Lun by given its Id.
+func (u *Unity) GetLunById(id string) (*Lun, error) {
+	res := &Lun{}
 	if err := u.getInstanceByID("lun", id, fieldsLUN, res); err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-// GetLUNs retrives all LUNs.
-func (u *Unity) GetLUNs() ([]*LUN, error) {
-	collection, err := u.getCollection("lun", fieldsLUN, nil, reflect.TypeOf(LUN{}))
+// GetLuns retrives all LUNs.
+func (u *Unity) GetLuns() ([]*Lun, error) {
+	collection, err := u.getCollection("lun", fieldsLUN, nil, reflect.TypeOf(Lun{}))
 	if err != nil {
 		return nil, err
 	}
-	res := collection.([]*LUN)
+	res := collection.([]*Lun)
 	return res, nil
 }

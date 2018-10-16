@@ -14,7 +14,7 @@ func TestGetPoolByID(t *testing.T) {
 	pool, err := ctx.unity.GetPoolByID("pool_1")
 	assert.Nil(t, err)
 
-	assert.Equal(t, "pool_1", pool.ID)
+	assert.Equal(t, "pool_1", pool.Id)
 }
 
 func TestGetPools(t *testing.T) {
@@ -28,7 +28,7 @@ func TestGetPools(t *testing.T) {
 	assert.Equal(t, 4, len(pools))
 	ids := []string{}
 	for _, pool := range pools {
-		ids = append(ids, pool.ID)
+		ids = append(ids, pool.Id)
 	}
 	assert.EqualValues(t, []string{"pool_1", "pool_2", "pool_7", "pool_9"}, ids)
 }
@@ -41,10 +41,10 @@ func TestCreateLUN(t *testing.T) {
 	pool, err := ctx.unity.GetPoolByID("pool_1")
 	assert.Nil(t, err)
 
-	lun, err := pool.CreateLUN("lun-gounity", 3)
+	lun, err := pool.CreateLun("lun-gounity", 3)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "sv_1", lun.ID)
+	assert.Equal(t, "sv_1", lun.Id)
 }
 
 func TestCreateLUNNameExist(t *testing.T) {
@@ -55,7 +55,7 @@ func TestCreateLUNNameExist(t *testing.T) {
 	pool, err := ctx.unity.GetPoolByID("pool_1")
 	assert.Nil(t, err)
 
-	_, err = pool.CreateLUN("lun-name-exist-gounity", 3)
+	_, err = pool.CreateLun("lun-name-exist-gounity", 3)
 	assert.NotNil(t, err)
 
 	unityError, ok := err.(*UnityError)

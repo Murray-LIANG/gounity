@@ -32,11 +32,11 @@ func TestDoWithHeaders(t *testing.T) {
 		instResp)
 	assert.Nil(t, err)
 
-	lun := &LUN{}
+	lun := &Lun{}
 	err = json.Unmarshal(instResp.Content, lun)
 	assert.Nil(t, err)
-	assert.Equal(t, "sv_1", lun.ID)
-	assert.Equal(t, "pool_1", lun.Pool.ID)
+	assert.Equal(t, "sv_1", lun.Id)
+	assert.Equal(t, "pool_1", lun.Pool.Id)
 }
 
 func TestGet(t *testing.T) {
@@ -50,9 +50,9 @@ func TestGet(t *testing.T) {
 		instResp)
 	assert.Nil(t, err)
 
-	lun := &LUN{}
+	lun := &Lun{}
 	err = json.Unmarshal(instResp.Content, lun)
 	assert.Nil(t, err)
-	assert.Equal(t, "sv_1", lun.ID)
-	assert.Equal(t, "pool_1", lun.Pool.ID)
+	assert.Equal(t, "sv_1", lun.Id)
+	assert.Equal(t, "pool_1", lun.Pool.Id)
 }

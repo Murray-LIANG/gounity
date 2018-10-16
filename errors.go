@@ -8,7 +8,7 @@ import (
 const (
 	// UnityResourceNotFoundErrorCode is error code for resource not found.
 	UnityResourceNotFoundErrorCode = 131149829
-	// UnityLunNameExistErrorCode is error code for LUN name existing.
+	// UnityLunNameExistErrorCode is error code for Lun name existing.
 	UnityLunNameExistErrorCode = 108007744
 )
 

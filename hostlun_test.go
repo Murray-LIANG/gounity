@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFilterHostLUN(t *testing.T) {
+func TestFilterHostLun(t *testing.T) {
 	ctx, err := newTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
 	defer ctx.tearDown()

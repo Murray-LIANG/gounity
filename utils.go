@@ -59,7 +59,7 @@ const (
 	pathAPIInstances = "api/instances"
 )
 
-func buildURL(baseURL, fields string, filter *filter) string {
+func buildUrl(baseURL, fields string, filter *filter) string {
 	queryParams := map[string]string{"compact": "true", "fields": fields}
 	if filter != nil {
 		queryParams["filter"] = filter.string()
@@ -77,20 +77,20 @@ func buildURL(baseURL, fields string, filter *filter) string {
 	return u.String()
 }
 
-func queryCollectionURL(res, fields string, filter *filter) string {
-	return buildURL(strings.Join([]string{pathAPITypes, res, "instances"}, "/"), fields,
+func queryCollectionUrl(res, fields string, filter *filter) string {
+	return buildUrl(strings.Join([]string{pathAPITypes, res, "instances"}, "/"), fields,
 		filter)
 }
 
-func queryInstanceURL(res, id, fields string) string {
-	return buildURL(strings.Join([]string{pathAPIInstances, res, id}, "/"), fields, nil)
+func queryInstanceUrl(res, id, fields string) string {
+	return buildUrl(strings.Join([]string{pathAPIInstances, res, id}, "/"), fields, nil)
 }
 
-func postCollectionURL(res, action string) string {
+func postCollectionUrl(res, action string) string {
 	return strings.Join([]string{pathAPITypes, res, "action", action}, "/")
 }
 
-func postInstanceURL(res, id, action string) string {
+func postInstanceUrl(res, id, action string) string {
 	return strings.Join([]string{pathAPIInstances, res, id, "action", action}, "/")
 }
 
@@ -209,7 +209,7 @@ func mockServerHandler(resp http.ResponseWriter, req *http.Request) {
 		if err != nil && err != io.EOF {
 			resp.WriteHeader(http.StatusNotFound)
 		} else if mockError != nil {
-			resp.WriteHeader(mockError.HTTPStatusCode)
+			resp.WriteHeader(mockError.HttpStatusCode)
 		}
 		resp.Write(respBytes)
 	}
@@ -234,7 +234,7 @@ func newTestContext() (*testContext, error) {
 	if err != nil {
 		return nil, err
 	}
-	unity, err := NewUnity(extractIP(mockServer.URL), "", "", true)
+	unity, err := NewUnity(extractIp(mockServer.URL), "", "", true)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func (c *testContext) tearDown() {
 	c.mockServer.Close()
 }
 
-func extractIP(url string) string {
+func extractIp(url string) string {
 	return strings.Split(url, "/")[2]
 }
 

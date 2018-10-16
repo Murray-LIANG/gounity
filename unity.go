@@ -27,9 +27,9 @@ type Storage interface {
 	GetPoolById(id string) (*Pool, error)
 	GetPoolByName(name string) (*Pool, error)
 
-	GetLUNs() ([]*LUN, error)
-	GetLUNById(id string) (*LUN, error)
-	GetLUNByName(name string) (*LUN, error)
+	GetLuns() ([]*Lun, error)
+	GetLunById(id string) (*Lun, error)
+	GetLunByName(name string) (*Lun, error)
 }
 
 // NewUnity creates a connection to a Unity system.
@@ -93,7 +93,7 @@ func setUnity(instancePtr reflect.Value, unity *Unity) {
 
 func (u *Unity) getInstanceByID(resType, id, fields string, instance interface{}) error {
 	resp := &instanceResp{}
-	if err := u.client.Get(context.Background(), queryInstanceURL(resType, id, fields),
+	if err := u.client.Get(context.Background(), queryInstanceUrl(resType, id, fields),
 		nil, resp); err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func (u *Unity) getCollection(resType, fields string, filter *filter,
 	instanceType reflect.Type) (interface{}, error) {
 	resp := &collectionResp{}
 	if err := u.client.Get(context.Background(),
-		queryCollectionURL(resType, fields, filter), nil,
+		queryCollectionUrl(resType, fields, filter), nil,
 		resp); err != nil {
 		return nil, err
 	}
