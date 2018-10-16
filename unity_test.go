@@ -15,6 +15,6 @@ func (w *WrapperOfStorage) SetStorage(s Storage) {
 func TestStorageInterface(t *testing.T) {
 	ctx, _ := newTestContext()
 	w := &WrapperOfStorage{}
-	//Use below call to make all methods in Storage interface are implemented by Unity strcut.
+	//Use below call to make sure that all methods in Storage interface are implemented by Unity strcut.
 	w.SetStorage(ctx.unity)
 }
