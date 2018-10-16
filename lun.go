@@ -41,7 +41,7 @@ var (
 )
 
 // GetLUNByID retrives the LUN by given its ID.
-func (u *Unity) GetLUNByID(id string) (*LUN, error) {
+func (u *Unity) GetLUNById(id string) (*LUN, error) {
 	res := &LUN{}
 	if err := u.getInstanceByID("lun", id, fieldsLUN, res); err != nil {
 		return nil, err
