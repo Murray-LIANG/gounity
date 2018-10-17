@@ -12,7 +12,7 @@ GoUnity is a Go project that provides a client for managing Dell EMC Unity stora
 
 ## Current State
 
-**Under developing. Please contribute.**
+**Under developing. Please contribute under the [guideline](#contribute-guideline).**
 
 
 ## License
@@ -80,3 +80,19 @@ hluNum, err := host.Attach(lun)
 ## Issues
 
 If you have any questions or find any issues, please post [Github Issues](https://github.com/murray-LIANG/gounity/issues).
+
+
+## Contribute Guideline
+
+### You are one of the collaborators
+1. Create a branch from the latest `develop` branch: `git checkout -b <branch_name>`.
+2. Push code changes to your branch. Please make sure your changes be covered by unittest.
+3. Push your branch to the remote.
+4. Publish a pull request from your branch to `develop` branch.
+5. Merge the pull request after passing the review. Recommend using `Squash and Merge` and deleting your branch after merging.
+
+### You aren't
+1. Fork this repo as your own one.
+2. Push code changes to your repo. Please make sure your changes be covered by unittest.
+3. Publish a pull request from your repo to `develop` branch of this repo.
+4. Wait for merging the pull request.
