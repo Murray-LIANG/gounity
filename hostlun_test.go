@@ -11,7 +11,7 @@ func TestFilterHostLun(t *testing.T) {
 	assert.Nil(t, err, "failed to setup rest client to mock server")
 	defer ctx.tearDown()
 
-	hostLun, err := ctx.unity.FilterHostLUN("Host_1", "sv_1")
+	hostLun, err := ctx.unity.FilterHostLun("Host_1", "sv_1")
 	assert.Nil(t, err)
 
 	assert.Equal(t, uint16(1), hostLun.Hlu)

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	fieldsHostLUN = strings.Join([]string{
+	fieldsHostLun = strings.Join([]string{
 		"hlu",
 		"host.id",
 		"id",
@@ -20,24 +20,24 @@ var (
 	}, ",")
 )
 
-// FilterHostLUN filters the `HostLun` by given its host Id and Lun Id.
-func (u *Unity) FilterHostLUN(hostID, lunID string) (*HostLun, error) {
-	filter := newFilter(fmt.Sprintf(`host eq "%s"`, hostID)).and(
-		fmt.Sprintf(`lun eq "%s"`, lunID))
-	collection, err := u.getCollection("hostLUN", fieldsHostLUN, filter,
+// FilterHostLun filters the `HostLun` by given its host Id and Lun Id.
+func (u *Unity) FilterHostLun(hostId, lunId string) (*HostLun, error) {
+	filter := newFilter(fmt.Sprintf(`host eq "%s"`, hostId)).and(
+		fmt.Sprintf(`lun eq "%s"`, lunId))
+	collection, err := u.getCollection("hostLun", fieldsHostLun, filter,
 		reflect.TypeOf(HostLun{}))
 	if err != nil {
 		return nil, err
 	}
 	res := collection.([]*HostLun)
 	if len(res) == 0 {
-		log.WithField("hostID", hostID).WithField("lunID",
-			lunID).Info("filter returns 0 hostLUN")
+		log.WithField("hostId", hostId).WithField("lunId",
+			lunId).Info("filter returns 0 hostLun")
 		return nil, nil
 	}
 	if len(res) > 1 {
-		log.WithField("hostID", hostID).WithField("lunID", lunID).WithField("resultCount",
-			len(res)).Info("filter returns more one hostLUNs")
+		log.WithField("hostId", hostId).WithField("lunId", lunId).WithField("resultCount",
+			len(res)).Info("filter returns more one hostLuns")
 	}
 	return res[0], nil
 }

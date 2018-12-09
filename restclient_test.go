@@ -15,7 +15,7 @@ func TestPingPong(t *testing.T) {
 	defer ctx.tearDown()
 
 	resp, err := ctx.restClient.PingPong(ctx.context, http.MethodGet,
-		fmt.Sprintf("api/instances/lun/sv_1?compact=true&fields=%s", fieldsLUN), nil, nil)
+		fmt.Sprintf("api/instances/lun/sv_1?compact=true&fields=%s", fieldsLun), nil, nil)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 200, resp.StatusCode)
@@ -28,7 +28,7 @@ func TestDoWithHeaders(t *testing.T) {
 
 	instResp := &instanceResp{}
 	err = ctx.restClient.DoWithHeaders(ctx.context, http.MethodGet,
-		fmt.Sprintf("api/instances/lun/sv_1?compact=true&fields=%s", fieldsLUN), nil, nil,
+		fmt.Sprintf("api/instances/lun/sv_1?compact=true&fields=%s", fieldsLun), nil, nil,
 		instResp)
 	assert.Nil(t, err)
 
@@ -46,7 +46,7 @@ func TestGet(t *testing.T) {
 
 	instResp := &instanceResp{}
 	err = ctx.restClient.Get(ctx.context,
-		fmt.Sprintf("api/instances/lun/sv_1?compact=true&fields=%s", fieldsLUN), nil,
+		fmt.Sprintf("api/instances/lun/sv_1?compact=true&fields=%s", fieldsLun), nil,
 		instResp)
 	assert.Nil(t, err)
 

@@ -21,7 +21,7 @@ var (
 // GetHostById retrives the host by given its Id.
 func (u *Unity) GetHostById(id string) (*Host, error) {
 	res := &Host{}
-	if err := u.getInstanceByID("host", id, fieldsHost, res); err != nil {
+	if err := u.getInstanceById("host", id, fieldsHost, res); err != nil {
 		return nil, err
 	}
 	return res, nil
@@ -65,7 +65,7 @@ func (h *Host) Attach(lun *Lun) (uint16, error) {
 		return 0, err
 	}
 
-	hostLun, err := h.Unity.FilterHostLUN(h.Id, lun.Id)
+	hostLun, err := h.Unity.FilterHostLun(h.Id, lun.Id)
 	if err != nil {
 		return 0, err
 	}

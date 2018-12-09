@@ -6,12 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetPoolByID(t *testing.T) {
+func TestGetPoolById(t *testing.T) {
 	ctx, err := newTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
 	defer ctx.tearDown()
 
-	pool, err := ctx.unity.GetPoolByID("pool_1")
+	pool, err := ctx.unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
 	assert.Equal(t, "pool_1", pool.Id)
@@ -33,12 +33,12 @@ func TestGetPools(t *testing.T) {
 	assert.EqualValues(t, []string{"pool_1", "pool_2", "pool_7", "pool_9"}, ids)
 }
 
-func TestCreateLUN(t *testing.T) {
+func TestCreateLun(t *testing.T) {
 	ctx, err := newTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
 	defer ctx.tearDown()
 
-	pool, err := ctx.unity.GetPoolByID("pool_1")
+	pool, err := ctx.unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
 	lun, err := pool.CreateLun("lun-gounity", 3)
@@ -47,12 +47,12 @@ func TestCreateLUN(t *testing.T) {
 	assert.Equal(t, "sv_1", lun.Id)
 }
 
-func TestCreateLUNNameExist(t *testing.T) {
+func TestCreateLunNameExist(t *testing.T) {
 	ctx, err := newTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
 	defer ctx.tearDown()
 
-	pool, err := ctx.unity.GetPoolByID("pool_1")
+	pool, err := ctx.unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
 	_, err = pool.CreateLun("lun-name-exist-gounity", 3)

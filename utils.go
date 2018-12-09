@@ -230,7 +230,7 @@ func newTestContext() (*testContext, error) {
 	mockServer := setupMockServer()
 	ctx := context.Background()
 	restClient, err := NewRestClient(ctx, mockServer.URL,
-		"", "", RestClientOptions{Insecure: true, TraceHTTP: true})
+		"", "", RestClientOptions{Insecure: true, TraceHttp: true})
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +255,7 @@ func gbToBytes(gb uint64) uint64 {
 }
 
 type idRepresent struct {
-	ID string `json:"id"`
+	Id string `json:"id"`
 }
 
 func represent(instance interface{}) *idRepresent {

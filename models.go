@@ -86,20 +86,20 @@ type Health struct {
 type HostLunAccessEnum int
 
 const (
-	// HostLUNAccessNoAccess defines `NoAccess` value of HostLunAccessEnum.
-	HostLUNAccessNoAccess HostLunAccessEnum = iota
+	// HostLunAccessNoAccess defines `NoAccess` value of HostLunAccessEnum.
+	HostLunAccessNoAccess HostLunAccessEnum = iota
 
 	// HostLunAccessProduction defines `Production` value of HostLunAccessEnum.
 	HostLunAccessProduction
 
-	// HostLUNAccessSnapshot defines `Snapshot` value of HostLunAccessEnum.
-	HostLUNAccessSnapshot
+	// HostLunAccessSnapshot defines `Snapshot` value of HostLunAccessEnum.
+	HostLunAccessSnapshot
 
-	// HostLUNAccessBoth defines `Both` value of HostLunAccessEnum.
-	HostLUNAccessBoth
+	// HostLunAccessBoth defines `Both` value of HostLunAccessEnum.
+	HostLunAccessBoth
 
-	// HostLUNAccessMixed defines `Mixed` value of HostLunAccessEnum.
-	HostLUNAccessMixed // TODO(ryan) Mixed = 0xffff
+	// HostLunAccessMixed defines `Mixed` value of HostLunAccessEnum.
+	HostLunAccessMixed // TODO(ryan) Mixed = 0xffff
 )
 
 // Host defines Unity corresponding `host` type.
@@ -122,14 +122,14 @@ type BlockHostAccess struct {
 type HostLunTypeEnum int
 
 const (
-	// HostLUNTypeUnknown defines `Unknown` value of HostLunTypeEnum.
-	HostLUNTypeUnknown HostLunTypeEnum = iota
+	// HostLunTypeUnknown defines `Unknown` value of HostLunTypeEnum.
+	HostLunTypeUnknown HostLunTypeEnum = iota
 
-	// HostLUNTypeLUN defines `Lun` value of HostLunTypeEnum.
-	HostLUNTypeLUN
+	// HostLunTypeLun defines `Lun` value of HostLunTypeEnum.
+	HostLunTypeLun
 
-	// HostLUNTypeSnap defines `Snap` value of HostLunTypeEnum.
-	HostLUNTypeSnap
+	// HostLunTypeSnap defines `Snap` value of HostLunTypeEnum.
+	HostLunTypeSnap
 )
 
 // HostLun defines Unity corresponding `HostLun` type.

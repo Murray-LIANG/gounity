@@ -21,10 +21,10 @@ var (
 	}, ",")
 )
 
-// GetPoolByID retrives the pool by given its Id.
-func (u *Unity) GetPoolByID(id string) (*Pool, error) {
+// GetPoolById retrives the pool by given its Id.
+func (u *Unity) GetPoolById(id string) (*Pool, error) {
 	res := &Pool{}
-	if err := u.getInstanceByID("pool", id, fieldsPool, res); err != nil {
+	if err := u.getInstanceById("pool", id, fieldsPool, res); err != nil {
 		return nil, err
 	}
 	return res, nil
@@ -61,18 +61,14 @@ func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 		return nil, err
 	}
 
-	createdID := resp.Content.StorageResource.Id
-	logger.WithField("createdLunID", createdID).Debug("lun created")
+	createdId := resp.Content.StorageResource.Id
+	logger.WithField("createdLunId", createdId).Debug("lun created")
 
-	createdLUN, err := p.Unity.GetLunById(createdID)
+	createdLun, err := p.Unity.GetLunById(createdId)
 	if err != nil {
 		logger.WithError(err).Error("failed to get the created lun")
 	}
-	return createdLUN, err
-}
-
-func (u *Unity) GetPoolById(id string) (*Pool, error) {
-	return nil, errors.New("Not Implemented.")
+	return createdLun, err
 }
 
 func (u *Unity) GetPoolByName(id string) (*Pool, error) {

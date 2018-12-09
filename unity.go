@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	traceHTTP, _ = strconv.ParseBool(os.Getenv("GOUNITY_TRACEHTTP"))
+	traceHttp, _ = strconv.ParseBool(os.Getenv("GOUNITY_TRACEHTTP"))
 )
 
 // Unity defines the connection to Unity system.
@@ -33,28 +33,28 @@ type Storage interface {
 }
 
 // NewUnity creates a connection to a Unity system.
-func NewUnity(mgmtIP, username, password string, insecure bool) (*Unity, error) {
+func NewUnity(mgmtIp, username, password string, insecure bool) (*Unity, error) {
 
 	fields := map[string]interface{}{
-		"mgmtIp":    mgmtIP,
+		"mgmtIp":    mgmtIp,
 		"insecure":  insecure,
-		"traceHTTP": traceHTTP,
+		"traceHttp": traceHttp,
 	}
 	logger := log.WithFields(fields)
 
 	logger.Debug("gounity connection initializing")
 
-	if mgmtIP == "" {
-		logger.Error("mgmtIP is required")
-		return nil, newGounityError("mgmtIP is required").withFields(fields)
+	if mgmtIp == "" {
+		logger.Error("mgmtIp is required")
+		return nil, newGounityError("mgmtIp is required").withFields(fields)
 	}
 
 	opts := RestClientOptions{
 		Insecure:  insecure,
-		TraceHTTP: traceHTTP,
+		TraceHttp: traceHttp,
 	}
 
-	host := fmt.Sprintf("%s://%s", "https", mgmtIP)
+	host := fmt.Sprintf("%s://%s", "https", mgmtIp)
 
 	restClient, err := NewRestClient(context.Background(), host, username, password, opts)
 	if err != nil {
@@ -91,7 +91,7 @@ func setUnity(instancePtr reflect.Value, unity *Unity) {
 	field.Set(reflect.ValueOf(unity))
 }
 
-func (u *Unity) getInstanceByID(resType, id, fields string, instance interface{}) error {
+func (u *Unity) getInstanceById(resType, id, fields string, instance interface{}) error {
 	resp := &instanceResp{}
 	if err := u.client.Get(context.Background(), queryInstanceUrl(resType, id, fields),
 		nil, resp); err != nil {

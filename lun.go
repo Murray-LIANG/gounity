@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	fieldsLUN = strings.Join([]string{
+	fieldsLun = strings.Join([]string{
 		// "compressionPercent",
 		// "compressionSizeSaved",
 		// "currentNode",
@@ -44,15 +44,15 @@ var (
 // GetLunById retrives the Lun by given its Id.
 func (u *Unity) GetLunById(id string) (*Lun, error) {
 	res := &Lun{}
-	if err := u.getInstanceByID("lun", id, fieldsLUN, res); err != nil {
+	if err := u.getInstanceById("lun", id, fieldsLun, res); err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-// GetLuns retrives all LUNs.
+// GetLuns retrives all Luns.
 func (u *Unity) GetLuns() ([]*Lun, error) {
-	collection, err := u.getCollection("lun", fieldsLUN, nil, reflect.TypeOf(Lun{}))
+	collection, err := u.getCollection("lun", fieldsLun, nil, reflect.TypeOf(Lun{}))
 	if err != nil {
 		return nil, err
 	}

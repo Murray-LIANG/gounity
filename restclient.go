@@ -82,14 +82,14 @@ type client struct {
 	password  string
 	authToken string
 	csrfToken string
-	traceHTTP bool
+	traceHttp bool
 }
 
 // RestClientOptions are options for the REST client.
 type RestClientOptions struct {
 	// Insecure indicates whether or not to suppress SSL errors.
 	Insecure  bool
-	TraceHTTP bool
+	TraceHttp bool
 }
 
 // NewRestClient returns a new REST client to Unity.
@@ -106,7 +106,7 @@ func NewRestClient(ctx context.Context, host, username, password string,
 		return nil, err
 	}
 	c := &client{http: &http.Client{Jar: cookieJar}, host: host,
-		username: username, password: password, traceHTTP: opts.TraceHTTP}
+		username: username, password: password, traceHttp: opts.TraceHttp}
 
 	if opts.Insecure {
 		c.http.Transport = &http.Transport{
@@ -186,7 +186,7 @@ func (c *client) doWithRetryOnce(ctx context.Context, req *http.Request) (*http.
 	for count := 0; count < 2; count++ {
 		req.Header.Set("EMC-CSRF-TOKEN", c.csrfToken)
 
-		if c.traceHTTP {
+		if c.traceHttp {
 			traceRequest(ctx, req)
 		}
 		req = req.WithContext(ctx)
@@ -194,7 +194,7 @@ func (c *client) doWithRetryOnce(ctx context.Context, req *http.Request) (*http.
 		if err != nil {
 			return nil, err
 		}
-		if c.traceHTTP {
+		if c.traceHttp {
 			traceResponse(ctx, resp)
 		}
 		c.csrfToken = resp.Header.Get("EMC-CSRF-TOKEN")
