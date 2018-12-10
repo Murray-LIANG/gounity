@@ -104,6 +104,13 @@ func (u *Unity) getInstanceById(resType, id, fields string, instance interface{}
 	return nil
 }
 
+func (u *Unity) getInstanceByName(
+	resType, name, fields string, instance interface{},
+) error {
+
+	return u.getInstanceById(resType, "name:" + name, fields, instance)
+}
+
 type filter []string
 
 func newFilter(f string) *filter {

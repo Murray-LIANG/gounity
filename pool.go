@@ -2,7 +2,6 @@ package gounity
 
 import (
 	"context"
-	"errors"
 	"reflect"
 	"strings"
 
@@ -25,6 +24,15 @@ var (
 func (u *Unity) GetPoolById(id string) (*Pool, error) {
 	res := &Pool{}
 	if err := u.getInstanceById("pool", id, fieldsPool, res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// GetPoolByName retrives the pool by given its name.
+func (u *Unity) GetPoolByName(name string) (*Pool, error) {
+	res := &Pool{}
+	if err := u.getInstanceByName("pool", name, fieldsPool, res); err != nil {
 		return nil, err
 	}
 	return res, nil
@@ -71,6 +79,38 @@ func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 	return createdLun, err
 }
 
-func (u *Unity) GetPoolByName(id string) (*Pool, error) {
-	return nil, errors.New("Not Implemented.")
+// CreateFilesystem creates a new filesystem on the pool.
+func (p *Pool) CreateFilesystem(
+	nas_server *NasServer, name string, sizeGB uint64,
+) (*Filesystem, error) {
+
+	fsParams := map[string]interface{}{
+		"nasServer": represent(nas_server),
+		"pool":      represent(p),
+		"size":      gbToBytes(sizeGB),
+	}
+	body := map[string]interface{}{
+		"name":          name,
+		"lunParameters": fsParams,
+	}
+	logger := log.WithField("requestBody", body)
+	logger.Debug("creating filesystem")
+
+	resp := &storageResourceCreateResp{}
+	if err := p.Unity.client.Post(context.Background(),
+		postCollectionUrl("storageResource", "createFilesystem"),
+		nil, body, resp); err != nil {
+
+		logger.WithError(err).Error("failed to create filesystem")
+		return nil, err
+	}
+
+	createdId := resp.Content.StorageResource.Id
+	logger.WithField("createdFilesystemId", createdId).Debug("filesystem created")
+
+	createdFs, err := p.Unity.GetFilesystemById(createdId)
+	if err != nil {
+		logger.WithError(err).Error("failed to get the created filesystem")
+	}
+	return createdFs, err
 }

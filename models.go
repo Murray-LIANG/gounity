@@ -142,3 +142,48 @@ type HostLun struct {
 	IsReadOnly    bool            `json:"isReadOnly"`
 	IsDefaultSnap bool            `json:"isDefaultSnap"`
 }
+
+// NasServer defines Unity corresponding `NasServer` type.
+type NasServer struct {
+	Unity       *Unity
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
+	Health      *Health `json:"health,omitempty"`
+	Description string  `json:"description"`
+}
+
+// Filesystem defines Unity corresponding `Filesystem` type.
+type Filesystem struct {
+	Unity       *Unity
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
+	Health      *Health `json:"health,omitempty"`
+	Description string  `json:"description"`
+}
+
+// NfsShareDefaultAccessEnum defines Unity corresponding `NFSShareDefaultAccessEnum`
+// enumeration.
+type NfsShareDefaultAccessEnum int
+
+const (
+	// NoAccess defines `NoAccess` value of NfsShareDefaultAccessEnum.
+	NoAccess NfsShareDefaultAccessEnum = iota
+
+	// ReadOnly defines `ReadOnly` value of NfsShareDefaultAccessEnum.
+	ReadOnly
+
+	// ReadWrite defines `ReadWrite` value of NfsShareDefaultAccessEnum.
+	ReadWrite
+
+	// Root defines `Root` value of NfsShareDefaultAccessEnum.
+	Root
+)
+
+// NfsShare defines Unity corresponding `NfsShare` type.
+type NfsShare struct {
+	Unity       *Unity
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	ExportPaths []string `json:"exportPaths"`
+}
