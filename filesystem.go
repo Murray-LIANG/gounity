@@ -1,14 +1,14 @@
 package gounity
 
 import (
-	"context"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
 var (
-	fieldsFs = strings.Join([]string{
+	typeNameFilesystem   = "filesystem"
+	typeFieldsFilesystem = strings.Join([]string{
 		"description",
 		"health",
 		"id",
@@ -16,23 +16,34 @@ var (
 	}, ",")
 )
 
-// GetFilesystemById retrives the filesystem by given its Id.
-func (u *Unity) GetFilesystemById(id string) (*Filesystem, error) {
-	res := &Filesystem{}
-	if err := u.getInstanceById("filesystem", id, fieldsFs, res); err != nil {
-		return nil, err
-	}
-	return res, nil
+// Filesystem defines Unity corresponding `Filesystem` type.
+type Filesystem struct {
+	Resource
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
+	Health      *Health `json:"health,omitempty"`
+	Description string  `json:"description"`
 }
 
-// GetFilesystemByName retrives the filesystem by given its name.
-func (u *Unity) GetFilesystemByName(name string) (*Filesystem, error) {
-	res := &Filesystem{}
-	if err := u.getInstanceByName("filesystem", name, fieldsFs, res); err != nil {
-		return nil, err
-	}
-	return res, nil
-}
+// NfsShareDefaultAccessEnum defines Unity corresponding `NFSShareDefaultAccessEnum`
+// enumeration.
+type NfsShareDefaultAccessEnum int
+
+const (
+	// NoAccess defines `NoAccess` value of NfsShareDefaultAccessEnum.
+	NoAccess NfsShareDefaultAccessEnum = iota
+
+	// ReadOnly defines `ReadOnly` value of NfsShareDefaultAccessEnum.
+	ReadOnly
+
+	// ReadWrite defines `ReadWrite` value of NfsShareDefaultAccessEnum.
+	ReadWrite
+
+	// Root defines `Root` value of NfsShareDefaultAccessEnum.
+	Root
+)
+
+//go:generate ./gen_resource.sh resource_tmpl.go filesystem_gen.go Filesystem
 
 // CreateNfsShare exports the nfs share from this filesystem.
 func (fs *Filesystem) CreateNfsShare(
@@ -53,19 +64,18 @@ func (fs *Filesystem) CreateNfsShare(
 	logger := log.WithField("requestBody", body)
 	logger.Debug("creating nfs share")
 
-	resp := &storageResourceCreateResp{}
-	if err := fs.Unity.client.Post(context.Background(),
-		postCollectionUrl("storageResource", "modifyFilesystem"),
-		nil, body, resp); err != nil {
+	var createdId string
+	var err error
+	if createdId, err = fs.unity.postOnType(typeStorageResource, actionModifyFilesystem,
+		body); err != nil {
 
 		logger.WithError(err).Error("failed to create nfs share")
 		return nil, err
 	}
 
-	createdId := resp.Content.StorageResource.Id
 	logger.WithField("createdNfsShareId", createdId).Debug("nfs share created")
 
-	created, err := fs.Unity.GetNfsShareById(createdId)
+	created, err := fs.unity.GetNfsShareById(createdId)
 	if err != nil {
 		logger.WithError(err).Error("failed to get the created nfs share")
 	}

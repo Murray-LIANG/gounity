@@ -1,15 +1,14 @@
 package gounity
 
 import (
-	"context"
-	"reflect"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
 var (
-	fieldsPool = strings.Join([]string{
+	typeNamePool   = "pool"
+	typeFieldsPool = strings.Join([]string{
 		"description",
 		"health",
 		"id",
@@ -20,38 +19,23 @@ var (
 	}, ",")
 )
 
-// GetPoolById retrives the pool by given its Id.
-func (u *Unity) GetPoolById(id string) (*Pool, error) {
-	res := &Pool{}
-	if err := u.getInstanceById("pool", id, fieldsPool, res); err != nil {
-		return nil, err
-	}
-	return res, nil
+// Pool defines Unity corresponding `pool` type.
+type Pool struct {
+	Resource
+	Id          string `json:"id"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	SizeFree    uint64 `json:"sizeFree,omitempty"`
+	SizeTotal   uint64 `json:"sizeTotal,omitempty"`
+	SizeUsed    uint64 `json:"sizeUsed,omitempty"`
 }
 
-// GetPoolByName retrives the pool by given its name.
-func (u *Unity) GetPoolByName(name string) (*Pool, error) {
-	res := &Pool{}
-	if err := u.getInstanceByName("pool", name, fieldsPool, res); err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-// GetPools retrives all pools.
-func (u *Unity) GetPools() ([]*Pool, error) {
-	collection, err := u.getCollection("pool", fieldsPool, nil, reflect.TypeOf(Pool{}))
-	if err != nil {
-		return nil, err
-	}
-	res := collection.([]*Pool)
-	return res, nil
-}
+// go:generate ./gen_resource.sh resource_tmpl.go pool_gen.go Pool
 
 // CreateLun creates a new Lun on the pool.
 func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 	lunParams := map[string]interface{}{
-		"pool": represent(p),
+		"pool": p.Repr(),
 		"size": gbToBytes(sizeGB),
 	}
 	body := map[string]interface{}{
@@ -61,18 +45,17 @@ func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 	logger := log.WithField("requestBody", body)
 	logger.Debug("creating lun")
 
-	resp := &storageResourceCreateResp{}
-	if err := p.Unity.client.Post(context.Background(),
-		postCollectionUrl("storageResource", "createLun"), nil, body, resp); err != nil {
+	var createdId string
+	var err error
+	if createdId, err = p.unity.postOnType(typeStorageResource, actionCreateLun, body); err != nil {
 
 		logger.WithError(err).Error("failed to create lun")
 		return nil, err
 	}
 
-	createdId := resp.Content.StorageResource.Id
 	logger.WithField("createdLunId", createdId).Debug("lun created")
 
-	createdLun, err := p.Unity.GetLunById(createdId)
+	createdLun, err := p.unity.GetLunById(createdId)
 	if err != nil {
 		logger.WithError(err).Error("failed to get the created lun")
 	}
@@ -81,12 +64,12 @@ func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 
 // CreateFilesystem creates a new filesystem on the pool.
 func (p *Pool) CreateFilesystem(
-	nas_server *NasServer, name string, sizeGB uint64,
+	nasServer *NasServer, name string, sizeGB uint64,
 ) (*Filesystem, error) {
 
 	fsParams := map[string]interface{}{
-		"nasServer": represent(nas_server),
-		"pool":      represent(p),
+		"nasServer": nasServer.Repr(),
+		"pool":      p.Repr(),
 		"size":      gbToBytes(sizeGB),
 	}
 	body := map[string]interface{}{
@@ -96,19 +79,18 @@ func (p *Pool) CreateFilesystem(
 	logger := log.WithField("requestBody", body)
 	logger.Debug("creating filesystem")
 
-	resp := &storageResourceCreateResp{}
-	if err := p.Unity.client.Post(context.Background(),
-		postCollectionUrl("storageResource", "createFilesystem"),
-		nil, body, resp); err != nil {
+	var createdId string
+	var err error
+	if createdId, err = p.unity.postOnType(typeStorageResource, actionCreateFilesystem,
+		body); err != nil {
 
 		logger.WithError(err).Error("failed to create filesystem")
 		return nil, err
 	}
 
-	createdId := resp.Content.StorageResource.Id
 	logger.WithField("createdFilesystemId", createdId).Debug("filesystem created")
 
-	createdFs, err := p.Unity.GetFilesystemById(createdId)
+	createdFs, err := p.unity.GetFilesystemById(createdId)
 	if err != nil {
 		logger.WithError(err).Error("failed to get the created filesystem")
 	}

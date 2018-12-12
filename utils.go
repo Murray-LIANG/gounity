@@ -55,6 +55,14 @@ func traceResponse(ctx context.Context, resp *http.Response) {
 }
 
 const (
+	typeStorageResource    = "storageResource"
+	actionCreateLun        = "createLun"
+	actionModifyLun        = "modifyLun"
+	actionCreateFilesystem = "createFilesystem"
+	actionModifyFilesystem = "modifyFilesystem"
+)
+
+const (
 	pathAPITypes     = "api/types"
 	pathAPIInstances = "api/instances"
 )
@@ -62,7 +70,7 @@ const (
 func buildUrl(baseURL, fields string, filter *filter) string {
 	queryParams := map[string]string{"compact": "true", "fields": fields}
 	if filter != nil {
-		queryParams["filter"] = filter.string()
+		queryParams["filter"] = filter.String()
 	}
 	u, err := url.Parse(baseURL)
 	if err != nil {
@@ -86,12 +94,33 @@ func queryInstanceUrl(res, id, fields string) string {
 	return buildUrl(strings.Join([]string{pathAPIInstances, res, id}, "/"), fields, nil)
 }
 
-func postCollectionUrl(res, action string) string {
-	return strings.Join([]string{pathAPITypes, res, "action", action}, "/")
+func postTypeUrl(typeName, action string) string {
+	return strings.Join([]string{pathAPITypes, typeName, "action", action}, "/")
 }
 
-func postInstanceUrl(res, id, action string) string {
-	return strings.Join([]string{pathAPIInstances, res, id, "action", action}, "/")
+func postInstanceUrl(typeName, resId, action string) string {
+	return strings.Join([]string{pathAPIInstances, typeName, resId, "action", action}, "/")
+}
+
+// UnityErrorMessage defines the error message struct returned by Unity.
+type UnityErrorMessage struct {
+	Message string `json:"en-US"`
+}
+
+// UnityError defines the error struct returned by Unity.
+type UnityError struct {
+	ErrorCode      int                 `json:"errorCode"`
+	HttpStatusCode int                 `json:"httpStatusCode"`
+	Messages       []UnityErrorMessage `json:"messages"`
+	Message        string
+}
+
+type unityErrorResp struct {
+	Error *UnityError `json:"error,omitempty"`
+}
+
+func (e *UnityError) Error() string {
+	return e.Message
 }
 
 func parseUnityError(reader io.Reader) (*UnityError, error) {
@@ -256,17 +285,4 @@ func gbToBytes(gb uint64) uint64 {
 
 type idRepresent struct {
 	Id string `json:"id"`
-}
-
-func represent(instance interface{}) *idRepresent {
-	res := &idRepresent{}
-	instBytes, err := json.Marshal(instance)
-	if err != nil {
-		return res
-	}
-
-	if err = json.Unmarshal(instBytes, res); err != nil {
-		return res
-	}
-	return res
 }

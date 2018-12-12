@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 
@@ -30,6 +29,13 @@ type Storage interface {
 	GetLuns() ([]*Lun, error)
 	GetLunById(id string) (*Lun, error)
 	GetLunByName(name string) (*Lun, error)
+}
+
+// Health defines Unity corresponding `health` type.
+type Health struct {
+	Value          int      `json:"value"`
+	DescriptionIds []string `json:"descriptionIds"`
+	Descriptions   []string `json:"descriptions"`
 }
 
 // NewUnity creates a connection to a Unity system.
@@ -67,28 +73,8 @@ func NewUnity(mgmtIp, username, password string, insecure bool) (*Unity, error) 
 	return unity, nil
 }
 
-func setUnity(instancePtr reflect.Value, unity *Unity) {
-	if instancePtr.Kind() != reflect.Ptr {
-		log.WithField("instancePtr",
-			instancePtr).Debug("`instancePtr` is not a pointer, skip setting field unity")
-		return
-	}
-	instStruct := instancePtr.Elem()
-	if instStruct.Kind() != reflect.Struct {
-		log.WithField("instStruct",
-			instancePtr).Debug("`instStruct` is not a struct, skip setting field unity")
-		return
-	}
-	field := instStruct.FieldByName("Unity")
-	if !field.IsValid() {
-		log.Debug("field `Unity` is not found, skip setting field unity")
-		return
-	}
-	if field.Kind() != reflect.TypeOf(unity).Kind() {
-		log.WithField("fieldKind", field.Kind()).Debug("field `Unity` is type `*Unity`")
-		return
-	}
-	field.Set(reflect.ValueOf(unity))
+type instanceResp struct {
+	Content json.RawMessage `json:"content"`
 }
 
 func (u *Unity) getInstanceById(resType, id, fields string, instance interface{}) error {
@@ -100,7 +86,6 @@ func (u *Unity) getInstanceById(resType, id, fields string, instance interface{}
 	if err := json.Unmarshal(resp.Content, instance); err != nil {
 		return err
 	}
-	setUnity(reflect.ValueOf(instance), u)
 	return nil
 }
 
@@ -108,43 +93,75 @@ func (u *Unity) getInstanceByName(
 	resType, name, fields string, instance interface{},
 ) error {
 
-	return u.getInstanceById(resType, "name:" + name, fields, instance)
+	return u.getInstanceById(resType, "name:"+name, fields, instance)
 }
 
 type filter []string
 
-func newFilter(f string) *filter {
+func NewFilter(f string) *filter {
 	return &filter{f}
 }
 
-func (f *filter) and(andFilter string) *filter {
+func (f *filter) And(andFilter string) *filter {
 	newFilter := append(*f, "and")
 	newFilter = append(newFilter, andFilter)
 	return &newFilter
 }
 
-func (f *filter) string() string {
+func (f *filter) String() string {
 	return strings.Join(*f, " ")
 }
 
-func (u *Unity) getCollection(resType, fields string, filter *filter,
-	instanceType reflect.Type) (interface{}, error) {
+type collectionResp struct {
+	Entries []*instanceResp `json:"entries"`
+}
+
+func (u *Unity) getCollection(
+	resType, fields string, filter *filter,
+) ([]*instanceResp, error) {
+
 	resp := &collectionResp{}
-	if err := u.client.Get(context.Background(),
-		queryCollectionUrl(resType, fields, filter), nil,
+	if err := u.client.Get(
+		context.Background(),
+		queryCollectionUrl(resType, fields, filter),
+		nil,
 		resp); err != nil {
 		return nil, err
 	}
+	return resp.Entries, nil
+}
 
-	collection := reflect.MakeSlice(reflect.SliceOf(reflect.PtrTo(instanceType)), 0,
-		len(resp.Entries))
-	for _, entry := range resp.Entries {
-		instance := reflect.New(instanceType)
-		if err := json.Unmarshal(entry.Content, instance.Interface()); err != nil {
-			return nil, err
-		}
-		setUnity(instance, u)
-		collection = reflect.Append(collection, instance)
+type storageResourceCreateResp struct {
+	Content struct {
+		StorageResource *StorageResource `json:"storageResource,omitempty"`
+	} `json:"content"`
+}
+
+// StorageResource defines Unity corresponding storage resource(like pool, Lun .etc).
+type StorageResource struct {
+	Id string `json:"id"`
+}
+
+func (u *Unity) postOnType(
+	typeName, action string, body map[string]interface{},
+) (string, error) {
+
+	resp := &storageResourceCreateResp{}
+	if err := u.client.Post(context.Background(), postTypeUrl(typeName, action),
+		nil, body, resp); err != nil {
+		return "", err
 	}
-	return collection.Interface(), nil
+
+	return resp.Content.StorageResource.Id, nil
+}
+
+func (u *Unity) postOnInstance(
+	typeName, resId, action string, body map[string]interface{},
+) error {
+
+	if err := u.client.Post(context.Background(),
+		postInstanceUrl(typeName, resId, action), nil, body, nil); err != nil {
+		return err
+	}
+	return nil
 }

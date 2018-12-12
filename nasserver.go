@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	fieldsNasServer = strings.Join([]string{
+	typeNameNasServer   = "nasServer"
+	typeFieldsNasServer = strings.Join([]string{
 		"description",
 		"health",
 		"id",
@@ -13,20 +14,13 @@ var (
 	}, ",")
 )
 
-// GetNasServerById retrives the nas server by given its Id.
-func (u *Unity) GetNasServerById(id string) (*NasServer, error) {
-	res := &NasServer{}
-	if err := u.getInstanceById("nasServer", id, fieldsNasServer, res); err != nil {
-		return nil, err
-	}
-	return res, nil
+// NasServer defines Unity corresponding `NasServer` type.
+type NasServer struct {
+	Resource
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
+	Health      *Health `json:"health,omitempty"`
+	Description string  `json:"description"`
 }
 
-// GetNasServerByName retrives the nas server by given its name.
-func (u *Unity) GetNasServerByName(name string) (*NasServer, error) {
-	res := &NasServer{}
-	if err := u.getInstanceByName("nasServer", name, fieldsNasServer, res); err != nil {
-		return nil, err
-	}
-	return res, nil
-}
+//go:generate ./gen_resource.sh resource_tmpl.go nasserver_gen.go NasServer

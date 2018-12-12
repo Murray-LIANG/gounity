@@ -2,14 +2,14 @@ package gounity
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
 var (
-	fieldsHostLun = strings.Join([]string{
+	typeNameHostLun   = "hostLUN"
+	typeFieldsHostLun = strings.Join([]string{
 		"hlu",
 		"host.id",
 		"id",
@@ -20,24 +20,51 @@ var (
 	}, ",")
 )
 
-// FilterHostLun filters the `HostLun` by given its host Id and Lun Id.
-func (u *Unity) FilterHostLun(hostId, lunId string) (*HostLun, error) {
-	filter := newFilter(fmt.Sprintf(`host eq "%s"`, hostId)).and(
+// HostLun defines Unity corresponding `HostLun` type.
+type HostLun struct {
+	Resource
+	Name          string          `json:"-"`
+	Id            string          `json:"id"`
+	Host          *Host           `json:"host"`
+	Type          HostLunTypeEnum `json:"type"`
+	Hlu           uint16          `json:"hlu"`
+	Lun           *Lun            `json:"lun"`
+	IsReadOnly    bool            `json:"isReadOnly"`
+	IsDefaultSnap bool            `json:"isDefaultSnap"`
+}
+
+// HostLunTypeEnum defines Unity corresponding `HostLunTypeEnum` enumeration.
+type HostLunTypeEnum int
+
+const (
+	// HostLunTypeUnknown defines `Unknown` value of HostLunTypeEnum.
+	HostLunTypeUnknown HostLunTypeEnum = iota
+
+	// HostLunTypeLun defines `Lun` value of HostLunTypeEnum.
+	HostLunTypeLun
+
+	// HostLunTypeSnap defines `Snap` value of HostLunTypeEnum.
+	HostLunTypeSnap
+)
+
+//go:generate ./gen_resource.sh resource_tmpl.go hostlun_gen.go HostLun
+
+// FilterHostLunByHostAndLun filters the `HostLun` by given its host Id and Lun Id.
+func (u *Unity) FilterHostLunByHostAndLun(hostId, lunId string) (*HostLun, error) {
+	filter := NewFilter(fmt.Sprintf(`host eq "%s"`, hostId)).And(
 		fmt.Sprintf(`lun eq "%s"`, lunId))
-	collection, err := u.getCollection("hostLun", fieldsHostLun, filter,
-		reflect.TypeOf(HostLun{}))
+	hostLuns, err := u.FilterHostLuns(filter)
 	if err != nil {
 		return nil, err
 	}
-	res := collection.([]*HostLun)
-	if len(res) == 0 {
+	if len(hostLuns) == 0 {
 		log.WithField("hostId", hostId).WithField("lunId",
 			lunId).Info("filter returns 0 hostLun")
 		return nil, nil
 	}
-	if len(res) > 1 {
+	if len(hostLuns) > 1 {
 		log.WithField("hostId", hostId).WithField("lunId", lunId).WithField("resultCount",
-			len(res)).Info("filter returns more one hostLuns")
+			len(hostLuns)).Info("filter returns more one hostLuns")
 	}
-	return res[0], nil
+	return hostLuns[0], nil
 }

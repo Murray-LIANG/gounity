@@ -1,13 +1,12 @@
 package gounity
 
 import (
-	"errors"
-	"reflect"
 	"strings"
 )
 
 var (
-	fieldsLun = strings.Join([]string{
+	typeNameLun   = "lun"
+	typeFieldsLun = strings.Join([]string{
 		// "compressionPercent",
 		// "compressionSizeSaved",
 		// "currentNode",
@@ -41,25 +40,52 @@ var (
 	}, ",")
 )
 
-// GetLunById retrives the Lun by given its Id.
-func (u *Unity) GetLunById(id string) (*Lun, error) {
-	res := &Lun{}
-	if err := u.getInstanceById("lun", id, fieldsLun, res); err != nil {
-		return nil, err
-	}
-	return res, nil
+// Lun defines Unity corresponding `lun` type.
+type Lun struct {
+	Resource
+	Description           string             `json:"description"`
+	Health                *Health            `json:"health,omitempty"`
+	HostAccess            []*BlockHostAccess `json:"hostAccess,omitempty"`
+	Id                    string             `json:"id"`
+	IsThinEnabled         bool               `json:"isThinEnabled"`
+	MetadataSize          uint64             `json:"metadataSize"`
+	MetadataSizeAllocated uint64             `json:"metadataSizeAllocated"`
+	Name                  string             `json:"name"`
+	Pool                  *Pool              `json:"pool,omitempty"`
+	SizeAllocated         uint64             `json:"sizeAllocated"`
+	SizeTotal             uint64             `json:"sizeTotal"`
+	SizeUsed              uint64             `json:"sizeUsed"`
+	SnapCount             uint32             `json:"snapCount"`
+	SnapWwn               string             `json:"snapWwn"`
+	SnapsSize             uint64             `json:"snapsSize"`
+	SnapsSizeAllocated    uint64             `json:"snapsSizeAllocated"`
+	Wwn                   string             `json:"wwn"`
 }
 
-// GetLuns retrives all Luns.
-func (u *Unity) GetLuns() ([]*Lun, error) {
-	collection, err := u.getCollection("lun", fieldsLun, nil, reflect.TypeOf(Lun{}))
-	if err != nil {
-		return nil, err
-	}
-	res := collection.([]*Lun)
-	return res, nil
+// BlockHostAccess defines Unity corresponding `blockHostAccess` type.
+type BlockHostAccess struct {
+	Host       *Host             `json:"host,omitempty"`
+	AccessMask HostLunAccessEnum `json:"accessMask"`
 }
 
-func (u *Unity) GetLunByName(name string) (*Lun, error) {
-	return nil, errors.New("Not Implemented!")
-}
+// HostLunAccessEnum defines Unity corresponding `HostLunAccessEnum` enumeration.
+type HostLunAccessEnum int
+
+const (
+	// HostLunAccessNoAccess defines `NoAccess` value of HostLunAccessEnum.
+	HostLunAccessNoAccess HostLunAccessEnum = iota
+
+	// HostLunAccessProduction defines `Production` value of HostLunAccessEnum.
+	HostLunAccessProduction
+
+	// HostLunAccessSnapshot defines `Snapshot` value of HostLunAccessEnum.
+	HostLunAccessSnapshot
+
+	// HostLunAccessBoth defines `Both` value of HostLunAccessEnum.
+	HostLunAccessBoth
+
+	// HostLunAccessMixed defines `Mixed` value of HostLunAccessEnum.
+	HostLunAccessMixed // TODO(ryan) Mixed = 0xffff
+)
+
+//go:generate ./gen_resource.sh resource_tmpl.go lun_gen.go Lun

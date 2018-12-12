@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	fieldsNfsShare = strings.Join([]string{
+	typeNameNfsShare   = "nfsShare"
+	typeFieldsNfsShare = strings.Join([]string{
 		"description",
 		"id",
 		"name",
@@ -13,20 +14,13 @@ var (
 	}, ",")
 )
 
-// GetNfsShareById retrives the nfs share by given its Id.
-func (u *Unity) GetNfsShareById(id string) (*NfsShare, error) {
-	res := &NfsShare{}
-	if err := u.getInstanceById("nfsShare", id, fieldsNfsShare, res); err != nil {
-		return nil, err
-	}
-	return res, nil
+// NfsShare defines Unity corresponding `NfsShare` type.
+type NfsShare struct {
+	Resource
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	ExportPaths []string `json:"exportPaths"`
 }
 
-// GetNfsShareByName retrives the nfs share by given its name.
-func (u *Unity) GetNfsShareByName(name string) (*NfsShare, error) {
-	res := &NfsShare{}
-	if err := u.getInstanceByName("nfsShare", name, fieldsNfsShare, res); err != nil {
-		return nil, err
-	}
-	return res, nil
-}
+//go:generate ./gen_resource.sh resource_tmpl.go nfsshare_gen.go NfsShare
