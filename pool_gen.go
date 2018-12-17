@@ -1,10 +1,11 @@
 package gounity
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/pkg/errors"
-	"fmt"
 	"encoding/json"
+	"fmt"
+
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type genPoolOperator interface {
@@ -55,7 +56,7 @@ func (r *Pool) Refresh() error {
 		latest *Pool
 		err    error
 	)
-	
+
 	switch r.Id {
 	case "":
 		if latest, err = r.unity.GetPoolByName(r.Name); err != nil {
@@ -75,7 +76,11 @@ func (r *Pool) Refresh() error {
 func (u *Unity) GetPoolById(id string) (*Pool, error) {
 	res := u.NewPoolById(id)
 
-	if err := u.GetInstanceById(res.typeName, id, res.typeFields, res); err != nil {
+	err := u.GetInstanceById(res.typeName, id, res.typeFields, res)
+	if err != nil {
+		if IsUnityError(err) {
+			return nil, err
+		}
 		return nil, errors.Wrap(err, "get Pool by id failed")
 	}
 	return res, nil

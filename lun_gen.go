@@ -1,10 +1,11 @@
 package gounity
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/pkg/errors"
-	"fmt"
 	"encoding/json"
+	"fmt"
+
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type genLunOperator interface {
@@ -55,7 +56,7 @@ func (r *Lun) Refresh() error {
 		latest *Lun
 		err    error
 	)
-	
+
 	switch r.Id {
 	case "":
 		if latest, err = r.unity.GetLunByName(r.Name); err != nil {
@@ -75,7 +76,11 @@ func (r *Lun) Refresh() error {
 func (u *Unity) GetLunById(id string) (*Lun, error) {
 	res := u.NewLunById(id)
 
-	if err := u.GetInstanceById(res.typeName, id, res.typeFields, res); err != nil {
+	err := u.GetInstanceById(res.typeName, id, res.typeFields, res)
+	if err != nil {
+		if IsUnityError(err) {
+			return nil, err
+		}
 		return nil, errors.Wrap(err, "get Lun by id failed")
 	}
 	return res, nil

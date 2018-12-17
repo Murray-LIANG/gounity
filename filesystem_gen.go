@@ -76,7 +76,11 @@ func (r *Filesystem) Refresh() error {
 func (u *Unity) GetFilesystemById(id string) (*Filesystem, error) {
 	res := u.NewFilesystemById(id)
 
-	if err := u.GetInstanceById(res.typeName, id, res.typeFields, res); err != nil {
+	err := u.GetInstanceById(res.typeName, id, res.typeFields, res)
+	if err != nil {
+		if IsUnityError(err) {
+			return nil, err
+		}
 		return nil, errors.Wrap(err, "get Filesystem by id failed")
 	}
 	return res, nil
