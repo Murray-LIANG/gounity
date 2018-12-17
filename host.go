@@ -3,6 +3,8 @@ package gounity
 import (
 	"strings"
 
+	"github.com/pkg/errors"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,6 +18,10 @@ var (
 		"osType",
 	}, ",")
 )
+
+type HostOperator interface {
+	genHostOperator
+}
 
 // Host defines Unity corresponding `host` type.
 type Host struct {
@@ -33,15 +39,15 @@ type Host struct {
 func (h *Host) Attach(lun *Lun) (uint16, error) {
 	hostAccess := []interface{}{
 		map[string]interface{}{
-			"host": h.Repr(),
+			"host":       h.Repr(),
 			"accessMask": HostLunAccessProduction,
 		},
 	}
 	for _, exist := range lun.HostAccess {
 		hostAccess = append(hostAccess,
 			map[string]interface{}{
-				"host": exist.Host.Repr(),
-				 "accessMask": exist.AccessMask,
+				"host":       exist.Host.Repr(),
+				"accessMask": exist.AccessMask,
 			},
 		)
 	}
@@ -50,19 +56,27 @@ func (h *Host) Attach(lun *Lun) (uint16, error) {
 		"lunParameters": map[string]interface{}{"hostAccess": hostAccess},
 	}
 
-	logger := log.WithField("host", h).WithField("lun", lun).WithField(
-		"requestBody", body)
+	fields := map[string]interface{}{
+		"host":        h,
+		"lun":         lun,
+		"requestBody": body,
+	}
+
+	logger := log.WithFields(fields)
+	msg := newMessage().withFields(fields)
+
 	logger.Debug("attaching lun to host")
-
-	if err := h.unity.postOnInstance(typeStorageResource, lun.Id, actionModifyLun, body); err != nil {
-
-		logger.WithError(err).Error("failed to attach lun to host")
-		return 0, err
+	if err := h.unity.PostOnInstance(
+		typeStorageResource, lun.Id, actionModifyLun, body,
+	); err != nil {
+		return 0, errors.Wrap(err, msg.withMessage("attach lun to host failed").String())
 	}
 
 	hostLun, err := h.unity.FilterHostLunByHostAndLun(h.Id, lun.Id)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(
+			err, msg.withMessage("filter hostlun by host and lun failed").String(),
+		)
 	}
 	return hostLun.Hlu, nil
 }

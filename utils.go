@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -103,34 +105,39 @@ func postInstanceUrl(typeName, resId, action string) string {
 }
 
 // UnityErrorMessage defines the error message struct returned by Unity.
-type UnityErrorMessage struct {
+type unityErrorMessage struct {
 	Message string `json:"en-US"`
 }
 
 // UnityError defines the error struct returned by Unity.
-type UnityError struct {
+type unityError struct {
 	ErrorCode      int                 `json:"errorCode"`
 	HttpStatusCode int                 `json:"httpStatusCode"`
-	Messages       []UnityErrorMessage `json:"messages"`
+	Messages       []unityErrorMessage `json:"messages"`
 	Message        string
 }
 
 type unityErrorResp struct {
-	Error *UnityError `json:"error,omitempty"`
+	Error *unityError `json:"error,omitempty"`
 }
 
-func (e *UnityError) Error() string {
-	return e.Message
+func (e *unityError) Error() string {
+	return fmt.Sprintf(
+		"error from unity, status code: %v, error code: %v, message: %v",
+		e.HttpStatusCode, e.ErrorCode, e.Message,
+	)
 }
 
-func parseUnityError(reader io.Reader) (*UnityError, error) {
+var errUnableParseRespToError = errors.New("unable parse response body to unity error")
+
+func parseUnityError(reader io.Reader) (error, error) {
 	resp := &unityErrorResp{}
 	if err := json.NewDecoder(reader).Decode(resp); err != nil {
 		return nil, err
 	}
 	if resp.Error == nil {
 		// not a `unity error` json in reader
-		return nil, nil
+		return nil, errUnableParseRespToError
 	}
 
 	respError := resp.Error
@@ -235,10 +242,12 @@ func mockServerHandler(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusNotFound)
 	} else {
 		mockError, err := parseUnityError(bytes.NewReader(respBytes))
-		if err != nil && err != io.EOF {
+		if mockError != nil {
+			if ue, ok := mockError.(*unityError); ok {
+				resp.WriteHeader(ue.HttpStatusCode)
+			}
+		} else if err != nil && err != io.EOF && err != errUnableParseRespToError {
 			resp.WriteHeader(http.StatusNotFound)
-		} else if mockError != nil {
-			resp.WriteHeader(mockError.HttpStatusCode)
 		}
 		resp.Write(respBytes)
 	}
@@ -259,7 +268,7 @@ func newTestContext() (*testContext, error) {
 	mockServer := setupMockServer()
 	ctx := context.Background()
 	restClient, err := NewRestClient(ctx, mockServer.URL,
-		"", "", RestClientOptions{Insecure: true, TraceHttp: true})
+		"", "", NewRestClientOptions(true, true))
 	if err != nil {
 		return nil, err
 	}

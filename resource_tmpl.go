@@ -2,7 +2,27 @@ package gounity
 
 import (
 	"encoding/json"
+	"fmt"
+
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
+
+type genDUMMYOperator interface {
+	NewDUMMYById(id string) *DUMMY
+
+	NewDUMMYByName(name string) *DUMMY
+
+	GetDUMMYById(id string) (*DUMMY, error)
+
+	GetDUMMYByName(name string) (*DUMMY, error)
+
+	GetDUMMYs() ([]*DUMMY, error)
+
+	FillDUMMYs(respEntries []*instanceResp) ([]*DUMMY, error)
+
+	FilterDUMMYs(filter *filter) ([]*DUMMY, error)
+}
 
 // NewDUMMYById constructs a `DUMMY` object with id.
 func (u *Unity) NewDUMMYById(id string) *DUMMY {
@@ -27,14 +47,16 @@ func (u *Unity) NewDUMMYByName(name string) *DUMMY {
 // Refresh updates the info from Unity.
 func (r *DUMMY) Refresh() error {
 	if r.Id == "" && r.Name == "" {
-		return newGounityError(
-			"cannot refresh on resource without Id nor Name").withField("resource", r)
+		return fmt.Errorf(
+			"cannot refresh on resource without Id nor Name, resource:%v", r,
+		)
 	}
 
 	var (
 		latest *DUMMY
 		err    error
 	)
+
 	switch r.Id {
 	case "":
 		if latest, err = r.unity.GetDUMMYByName(r.Name); err != nil {
@@ -54,8 +76,12 @@ func (r *DUMMY) Refresh() error {
 func (u *Unity) GetDUMMYById(id string) (*DUMMY, error) {
 	res := u.NewDUMMYById(id)
 
-	if err := u.getInstanceById(res.typeName, id, res.typeFields, res); err != nil {
-		return nil, err
+	err := u.GetInstanceById(res.typeName, id, res.typeFields, res)
+	if err != nil {
+		if IsUnityError(err) {
+			return nil, err
+		}
+		return nil, errors.Wrap(err, "get DUMMY by id failed")
 	}
 	return res, nil
 }
@@ -63,8 +89,8 @@ func (u *Unity) GetDUMMYById(id string) (*DUMMY, error) {
 // GetDUMMYByName retrives the `DUMMY` by given its name.
 func (u *Unity) GetDUMMYByName(name string) (*DUMMY, error) {
 	res := u.NewDUMMYByName(name)
-	if err := u.getInstanceByName(res.typeName, name, res.typeFields, res); err != nil {
-		return nil, err
+	if err := u.GetInstanceByName(res.typeName, name, res.typeFields, res); err != nil {
+		return nil, errors.Wrap(err, "get DUMMY by name failed")
 	}
 	return res, nil
 }
@@ -77,23 +103,24 @@ func (u *Unity) GetDUMMYs() ([]*DUMMY, error) {
 
 // FilterDUMMYs filters the `DUMMY` objects by given filters.
 func (u *Unity) FilterDUMMYs(filter *filter) ([]*DUMMY, error) {
-	respEntries, err := u.getCollection(typeNameDUMMY, typeFieldsDUMMY, filter)
+	respEntries, err := u.GetCollection(typeNameDUMMY, typeFieldsDUMMY, filter)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "filter DUMMY failed")
 	}
-	res, err := u.fillDUMMYs(respEntries)
+	res, err := u.FillDUMMYs(respEntries)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "fill DUMMYs failed")
 	}
 	return res, nil
 }
 
-func (u *Unity) fillDUMMYs(respEntries []*instanceResp) ([]*DUMMY, error) {
+// FillDUMMYs generates the `DUMMY` objects from collection query response.
+func (u *Unity) FillDUMMYs(respEntries []*instanceResp) ([]*DUMMY, error) {
 	resSlice := []*DUMMY{}
 	for _, entry := range respEntries {
 		res := u.NewDUMMYById("") // empty id for fake `DUMMY` object
 		if err := json.Unmarshal(entry.Content, res); err != nil {
-			return nil, err
+			return nil, errors.Wrapf(err, "decode to %v failed", res)
 		}
 		resSlice = append(resSlice, res)
 	}
@@ -103,9 +130,10 @@ func (u *Unity) fillDUMMYs(respEntries []*instanceResp) ([]*DUMMY, error) {
 // Repr represents a `DUMMY` object using its id.
 func (r *DUMMY) Repr() *idRepresent {
 	if r.Id == "" {
+		log.Infof("refreshing %v from unity", r)
 		err := r.Refresh()
 		if err != nil {
-			// TODO (ryan) Add log here
+			log.Errorf("refresh %v from unity failed, %+v", r, err)
 			return nil
 		}
 	}

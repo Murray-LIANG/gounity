@@ -14,6 +14,10 @@ var (
 	}, ",")
 )
 
+type NfsShareOperator interface {
+	genNfsShareOperator
+}
+
 // NfsShare defines Unity corresponding `NfsShare` type.
 type NfsShare struct {
 	Resource

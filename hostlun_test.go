@@ -12,6 +12,7 @@ func TestFilterHostLun(t *testing.T) {
 	defer ctx.tearDown()
 
 	hostLun, err := ctx.unity.FilterHostLunByHostAndLun("Host_1", "sv_1")
+
 	assert.Nil(t, err)
 
 	assert.Equal(t, uint16(1), hostLun.Hlu)

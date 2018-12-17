@@ -26,9 +26,7 @@ func TestGetLunByIdNotFound(t *testing.T) {
 	_, err = ctx.unity.GetLunById("sv_2")
 	assert.NotNil(t, err)
 
-	unityError, ok := err.(*UnityError)
-	assert.True(t, ok)
-	assert.Equal(t, UnityResourceNotFoundErrorCode, unityError.ErrorCode)
+	assert.True(t, IsUnityResourceNotFoundError(err))
 }
 
 func TestGetLuns(t *testing.T) {

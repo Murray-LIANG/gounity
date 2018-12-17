@@ -40,6 +40,10 @@ var (
 	}, ",")
 )
 
+type LunOperator interface {
+	genLunOperator
+}
+
 // Lun defines Unity corresponding `lun` type.
 type Lun struct {
 	Resource

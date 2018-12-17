@@ -1,10 +1,9 @@
 package gounity
 
 import (
-	"fmt"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -19,6 +18,12 @@ var (
 		"type",
 	}, ",")
 )
+
+type HostLunOperator interface {
+	genHostLunOperator
+
+	FilterHostLunByHostAndLun(hostId, lunId string) (*HostLun, error)
+}
 
 // HostLun defines Unity corresponding `HostLun` type.
 type HostLun struct {
@@ -51,20 +56,30 @@ const (
 
 // FilterHostLunByHostAndLun filters the `HostLun` by given its host Id and Lun Id.
 func (u *Unity) FilterHostLunByHostAndLun(hostId, lunId string) (*HostLun, error) {
-	filter := NewFilter(fmt.Sprintf(`host eq "%s"`, hostId)).And(
-		fmt.Sprintf(`lun eq "%s"`, lunId))
+	filter := NewFilterf(`host eq "%s"`, hostId).Andf(`lun eq "%s"`, lunId)
+
+	fileds := map[string]interface{}{
+		"hostId": hostId,
+		"lunId":  lunId,
+		"filter": filter,
+	}
+	msg := newMessage().withFields(fileds)
+
 	hostLuns, err := u.FilterHostLuns(filter)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, msg.withMessage("filter hostluns failed").String())
 	}
 	if len(hostLuns) == 0 {
-		log.WithField("hostId", hostId).WithField("lunId",
-			lunId).Info("filter returns 0 hostLun")
-		return nil, nil
+		return nil, errors.Wrap(
+			err, msg.withMessage("filter returned 0 hostlun").String(),
+		)
 	}
 	if len(hostLuns) > 1 {
-		log.WithField("hostId", hostId).WithField("lunId", lunId).WithField("resultCount",
-			len(hostLuns)).Info("filter returns more one hostLuns")
+		return nil, errors.Wrap(
+			err, msg.withField("numOfHostLun",
+				len(hostLuns)).withMessage(
+				"filter returned more than one hostluns").String(),
+		)
 	}
 	return hostLuns[0], nil
 }

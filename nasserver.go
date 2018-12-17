@@ -14,6 +14,10 @@ var (
 	}, ",")
 )
 
+type NasServerOperator interface {
+	genNasServerOperator
+}
+
 // NasServer defines Unity corresponding `NasServer` type.
 type NasServer struct {
 	Resource

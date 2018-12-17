@@ -1,8 +1,7 @@
 package gounity
 
-
 type Resource struct {
-	unity      *Unity
+	unity      UnityConnector
 	typeName   string
 	typeFields string
 }

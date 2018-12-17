@@ -12,6 +12,7 @@ func TestGetHostById(t *testing.T) {
 	defer ctx.tearDown()
 
 	host, err := ctx.unity.GetHostById("Host_1")
+
 	assert.Nil(t, err)
 
 	assert.Equal(t, "Host_1", host.Id)

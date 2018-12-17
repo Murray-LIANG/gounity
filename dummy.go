@@ -10,3 +10,7 @@ type DUMMY struct {
 	Id   string
 	Name string
 }
+
+type DUMMYOperator interface {
+	genDUMMYOperator
+}

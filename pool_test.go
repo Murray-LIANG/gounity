@@ -58,7 +58,5 @@ func TestCreateLunNameExist(t *testing.T) {
 	_, err = pool.CreateLun("lun-name-exist-gounity", 3)
 	assert.NotNil(t, err)
 
-	unityError, ok := err.(*UnityError)
-	assert.True(t, ok)
-	assert.Equal(t, UnityLunNameExistErrorCode, unityError.ErrorCode)
+	assert.True(t, IsUnityLunNameExistError(err))
 }
