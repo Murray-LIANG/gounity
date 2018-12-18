@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/pkg/errors"
 
@@ -14,6 +13,8 @@ import (
 )
 
 var (
+	// Reading from env variable makes it easy to trace http without modifying
+	// the source code.
 	traceHttp, _ = strconv.ParseBool(os.Getenv("GOUNITY_TRACEHTTP"))
 )
 
@@ -89,13 +90,6 @@ type Unity struct {
 	client RestClient
 }
 
-// Health defines Unity corresponding `health` type.
-type Health struct {
-	Value          int      `json:"value"`
-	DescriptionIds []string `json:"descriptionIds"`
-	Descriptions   []string `json:"descriptions"`
-}
-
 // NewUnity creates a connection to a Unity system.
 func NewUnity(
 	mgmtIp, username, password string, insecure bool,
@@ -164,32 +158,6 @@ func (u *Unity) GetInstanceByName(
 	resType, name, fields string, instance interface{},
 ) error {
 	return u.GetInstanceById(resType, "name:"+name, fields, instance)
-}
-
-type filter []string
-
-// NewFilter returns a filter used for filtering collection.
-func NewFilter(f string) *filter {
-	return &filter{f}
-}
-
-// NewFilterf returns a filter used for filtering collection.
-func NewFilterf(format string, args ...interface{}) *filter {
-	return NewFilter(fmt.Sprintf(format, args...))
-}
-
-func (f *filter) And(andFilter string) *filter {
-	newFilter := append(*f, "and")
-	newFilter = append(newFilter, andFilter)
-	return &newFilter
-}
-
-func (f *filter) Andf(format string, args ...interface{}) *filter {
-	return f.And(fmt.Sprintf(format, args...))
-}
-
-func (f *filter) String() string {
-	return strings.Join(*f, " ")
 }
 
 type collectionResp struct {
