@@ -1,17 +1,19 @@
-package gounity
+package gounity_test
 
 import (
 	"testing"
 
+	"github.com/Murray-LIANG/gounity"
+	"github.com/Murray-LIANG/gounity/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetLunById(t *testing.T) {
-	ctx, err := newTestContext()
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	lun, err := ctx.unity.GetLunById("sv_1")
+	lun, err := ctx.Unity.GetLunById("sv_1")
 	assert.Nil(t, err)
 
 	assert.Equal(t, "sv_1", lun.Id)
@@ -19,22 +21,22 @@ func TestGetLunById(t *testing.T) {
 }
 
 func TestGetLunByIdNotFound(t *testing.T) {
-	ctx, err := newTestContext()
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	_, err = ctx.unity.GetLunById("sv_2")
+	_, err = ctx.Unity.GetLunById("sv_2")
 	assert.NotNil(t, err)
 
-	assert.True(t, IsUnityResourceNotFoundError(err))
+	assert.True(t, gounity.IsUnityResourceNotFoundError(err))
 }
 
 func TestGetLuns(t *testing.T) {
-	ctx, err := newTestContext()
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	luns, err := ctx.unity.GetLuns()
+	luns, err := ctx.Unity.GetLuns()
 	assert.Nil(t, err)
 
 	assert.Equal(t, 4, len(luns))

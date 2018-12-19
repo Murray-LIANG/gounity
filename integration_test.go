@@ -1,6 +1,6 @@
 // +build integration
 
-package gounity
+package gounity_test
 
 import (
 	"flag"

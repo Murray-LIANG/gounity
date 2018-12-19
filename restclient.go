@@ -209,7 +209,7 @@ func (c *restClient) DoWithHeaders(
 			)
 		}
 	default:
-		unityError, err := parseUnityError(rawResp.Body)
+		unityError, err := ParseUnityError(rawResp.Body)
 		if err != nil {
 			return errors.Wrap(
 				err, msg.withField("status code", rawResp.StatusCode).String(),

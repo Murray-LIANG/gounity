@@ -21,6 +21,13 @@ func IsUnityError(err error) bool {
 	return ok
 }
 
+func GetUnityErrorStatusCode(err error) int {
+	if e, ok := errors.Cause(err).(*unityError); ok {
+		return e.HttpStatusCode
+	}
+	return -1
+}
+
 //go:generate ./gen_errors.sh
 
 type message struct {
