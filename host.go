@@ -1,46 +1,17 @@
 package gounity
 
 import (
-	"strings"
-
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 )
-
-var (
-	typeNameHost   = "host"
-	typeFieldsHost = strings.Join([]string{
-		"description",
-		"health",
-		"id",
-		"name",
-		"osType",
-	}, ",")
-)
-
-type HostOperator interface {
-	genHostOperator
-}
-
-// Host defines Unity corresponding `host` type.
-type Host struct {
-	Resource
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Health      *Health `json:"health,omitempty"`
-	Description string  `json:"description"`
-	OsType      string  `json:"osType"`
-}
-
-//go:generate ./gen_resource.sh resource_tmpl.go host_gen.go Host
 
 // Attach attaches the Lun to the host.
 func (h *Host) Attach(lun *Lun) (uint16, error) {
 	hostAccess := []interface{}{
 		map[string]interface{}{
 			"host":       h.Repr(),
-			"accessMask": HostLunAccessProduction,
+			"accessMask": HostLUNAccessProduction,
 		},
 	}
 	for _, exist := range lun.HostAccess {

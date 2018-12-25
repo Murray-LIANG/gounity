@@ -1,0 +1,7 @@
+id,string
+host,*Host
+type,HostLunTypeEnum
+hlu,uint16
+lun,*Lun
+isReadOnly,bool
+isDefaultSnap,bool

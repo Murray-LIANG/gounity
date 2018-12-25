@@ -1,59 +1,14 @@
 package gounity
 
 import (
-	"strings"
-
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	typeNameFilesystem   = "filesystem"
-	typeFieldsFilesystem = strings.Join([]string{
-		"description",
-		"health",
-		"id",
-		"name",
-	}, ",")
-)
-
-type FilesystemOperator interface {
-	genFilesystemOperator
-}
-
-// Filesystem defines Unity corresponding `Filesystem` type.
-type Filesystem struct {
-	Resource
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Health      *Health `json:"health,omitempty"`
-	Description string  `json:"description"`
-}
-
-// NfsShareDefaultAccessEnum defines Unity corresponding `NFSShareDefaultAccessEnum`
-// enumeration.
-type NfsShareDefaultAccessEnum int
-
-const (
-	// NoAccess defines `NoAccess` value of NfsShareDefaultAccessEnum.
-	NoAccess NfsShareDefaultAccessEnum = iota
-
-	// ReadOnly defines `ReadOnly` value of NfsShareDefaultAccessEnum.
-	ReadOnly
-
-	// ReadWrite defines `ReadWrite` value of NfsShareDefaultAccessEnum.
-	ReadWrite
-
-	// Root defines `Root` value of NfsShareDefaultAccessEnum.
-	Root
-)
-
-//go:generate ./gen_resource.sh resource_tmpl.go filesystem_gen.go Filesystem
-
 // CreateNfsShare exports the nfs share from this filesystem.
 func (fs *Filesystem) CreateNfsShare(
-	name string, defaultAccess NfsShareDefaultAccessEnum,
+	name string, defaultAccess NFSShareDefaultAccessEnum,
 ) (*NfsShare, error) {
 
 	shareParams := map[string]interface{}{

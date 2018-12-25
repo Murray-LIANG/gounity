@@ -7,15 +7,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	// UnityDUMMYErrorCode is a dummy error code for go generate.
-	UnityDUMMYErrorCode = -1
-	// UnityResourceNotFoundErrorCode is error code for resource not found.
-	UnityResourceNotFoundErrorCode = 131149829
-	// UnityLunNameExistErrorCode is error code for Lun name existing.
-	UnityLunNameExistErrorCode = 108007744
-)
-
 func IsUnityError(err error) bool {
 	_, ok := errors.Cause(err).(*unityError)
 	return ok
@@ -27,8 +18,6 @@ func GetUnityErrorStatusCode(err error) int {
 	}
 	return -1
 }
-
-//go:generate ./gen_errors.sh
 
 type message struct {
 	message string

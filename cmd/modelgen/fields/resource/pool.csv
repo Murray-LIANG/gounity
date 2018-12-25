@@ -1,0 +1,7 @@
+id,string
+name,string
+description,string
+health,*Health
+sizeFree,uint64
+sizeTotal,uint64
+sizeUsed,uint64

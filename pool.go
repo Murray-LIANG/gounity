@@ -1,42 +1,10 @@
 package gounity
 
 import (
-	"strings"
-
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 )
-
-var (
-	typeNamePool   = "pool"
-	typeFieldsPool = strings.Join([]string{
-		"description",
-		"health",
-		"id",
-		"name",
-		"sizeFree",
-		"sizeTotal",
-		"sizeUsed",
-	}, ",")
-)
-
-type PoolOperator interface {
-	genPoolOperator
-}
-
-// Pool defines Unity corresponding `pool` type.
-type Pool struct {
-	Resource
-	Id          string `json:"id"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	SizeFree    uint64 `json:"sizeFree,omitempty"`
-	SizeTotal   uint64 `json:"sizeTotal,omitempty"`
-	SizeUsed    uint64 `json:"sizeUsed,omitempty"`
-}
-
-//go:generate ./gen_resource.sh resource_tmpl.go pool_gen.go Pool
 
 // CreateLun creates a new Lun on the pool.
 func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {

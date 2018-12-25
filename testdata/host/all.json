@@ -1,5 +1,5 @@
 {
-    "@base": "https://10.245.101.39/api/types/host/instances?fields=description,health,id,name,osType&per_page=2000&compact=true",
+    "@base": "https://10.245.101.39/api/types/host/instances?fields=id,name,health,description,osType&per_page=2000&compact=true",
     "updated": "2018-06-21T05:54:00.954Z",
     "links": [
         {

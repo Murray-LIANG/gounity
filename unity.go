@@ -12,6 +12,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+//go:generate go run cmd/modelgen/modelgen.go -w cmd/modelgen
+//go:generate go fmt .
+
 var (
 	// Reading from env variable makes it easy to trace http without modifying
 	// the source code.
@@ -20,11 +23,6 @@ var (
 
 // RestClient acts as a REST client.
 type RestClient interface {
-	DoWithHeaders(
-		ctx context.Context, method, path string,
-		headers map[string]string, body, resp interface{},
-	) error
-
 	Do(
 		ctx context.Context,
 		method, path string, body, resp interface{},
@@ -68,21 +66,19 @@ type UnityConnector interface {
 		typeName, resId, action string, body map[string]interface{},
 	) error
 
-	DUMMYOperator
+	PoolOperatorGen
 
-	PoolOperator
+	LunOperatorGen
 
-	LunOperator
+	HostOperatorGen
 
-	HostOperator
+	HostLUNOperator
 
-	HostLunOperator
+	NasServerOperatorGen
 
-	NasServerOperator
+	FilesystemOperatorGen
 
-	FilesystemOperator
-
-	NfsShareOperator
+	NfsShareOperatorGen
 }
 
 // Unity defines the connection to Unity system.
