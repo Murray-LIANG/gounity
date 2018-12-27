@@ -3,31 +3,42 @@ package gounity
 import (
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
+
+func newCreateNfsShareBody(
+	fs *Filesystem, name string, opts ...Option,
+) map[string]interface{} {
+	o := NewOptions(opts...)
+	defer o.WarnNotUsedOptions()
+
+	shareCreate := map[string]interface{}{
+		"path": "/",
+		"name": name,
+	}
+
+	if da := o.PopDefaultAccess(); da != nil {
+		shareCreate["nfsShareParameters"] = map[string]interface{}{
+			"defaultAccess": da,
+		}
+	}
+	return map[string]interface{}{
+		"nfsShareCreate": []interface{}{shareCreate},
+	}
+}
 
 // CreateNfsShare exports the nfs share from this filesystem.
 func (fs *Filesystem) CreateNfsShare(
-	name string, defaultAccess NFSShareDefaultAccessEnum,
+	name string, opts ...Option,
 ) (*NfsShare, error) {
 
-	shareParams := map[string]interface{}{
-		"defaultAccess": defaultAccess,
-	}
-	shareCreate := map[string]interface{}{
-		"path":               "/",
-		"name":               name,
-		"nfsShareParameters": shareParams,
-	}
-	body := map[string]interface{}{
-		"nfsShareCreate": []interface{}{shareCreate},
-	}
+	body := newCreateNfsShareBody(fs, name, opts...)
 
 	fields := map[string]interface{}{
 		"requestBody": body,
 	}
 
-	logger := log.WithFields(fields)
+	logger := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
 	var createdId string

@@ -3,7 +3,7 @@ package gounity
 import (
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // Attach attaches the Lun to the host.
@@ -33,10 +33,10 @@ func (h *Host) Attach(lun *Lun) (uint16, error) {
 		"requestBody": body,
 	}
 
-	logger := log.WithFields(fields)
+	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
-	logger.Debug("attaching lun to host")
+	log.Debug("attaching lun to host")
 	if err := h.unity.PostOnInstance(
 		typeStorageResource, lun.Id, actionModifyLun, body,
 	); err != nil {

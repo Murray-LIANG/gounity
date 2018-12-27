@@ -3,36 +3,46 @@ package gounity
 import (
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
+func newCreateLunBody(p *Pool, opts ...Option) map[string]interface{} {
+
+	o := NewOptions(opts...)
+	defer o.WarnNotUsedOptions()
+
+	body := map[string]interface{}{"lunParameters": o.NewLunParameters(p)}
+
+	if name := o.PopName(); name != nil {
+		body["name"] = name
+	}
+
+	if ha := o.PopHostAccess(); ha != nil {
+		body["hostAccess"] = ha
+	}
+	return body
+}
+
 // CreateLun creates a new Lun on the pool.
-func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
-	lunParams := map[string]interface{}{
-		"pool": p.Repr(),
-		"size": gbToBytes(sizeGB),
-	}
-	body := map[string]interface{}{
-		"name":          name,
-		"lunParameters": lunParams,
-	}
+func (p *Pool) CreateLun(opts ...Option) (*Lun, error) {
+	body := newCreateLunBody(p, opts...)
 
 	fields := map[string]interface{}{
 		"requestBody": body,
 	}
-	logger := log.WithFields(fields)
+	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
 	var createdId string
 	var err error
-	logger.Debug("creating lun")
+	log.Debug("creating lun")
 	if createdId, err = p.unity.PostOnType(
 		typeStorageResource, actionCreateLun, body,
 	); err != nil {
 		return nil, errors.Wrap(err, msg.withMessage("create lun failed").String())
 	}
 
-	logger.WithField("createdLunId", createdId).Debug("lun created")
+	log.WithField("createdLunId", createdId).Debug("lun created")
 
 	createdLun, err := p.unity.GetLunById(createdId)
 	if err != nil {
@@ -45,37 +55,51 @@ func (p *Pool) CreateLun(name string, sizeGB uint64) (*Lun, error) {
 	return createdLun, err
 }
 
-// CreateFilesystem creates a new filesystem on the pool.
-func (p *Pool) CreateFilesystem(
-	nasServer *NasServer, name string, sizeGB uint64,
-) (*Filesystem, error) {
+func newCreateFilesystemBody(
+	p *Pool, nasServer *NasServer, opts ...Option,
+) map[string]interface{} {
+
+	o := NewOptions(opts...)
+	defer o.WarnNotUsedOptions()
 
 	fsParams := map[string]interface{}{
 		"nasServer": nasServer.Repr(),
 		"pool":      p.Repr(),
-		"size":      gbToBytes(sizeGB),
 	}
-	body := map[string]interface{}{
-		"name":          name,
-		"lunParameters": fsParams,
+	if size := o.PopSize(); size != nil {
+		fsParams["size"] = size
 	}
+
+	body := map[string]interface{}{"fsParameters": fsParams}
+	if name := o.PopName(); name != nil {
+		body["name"] = name
+	}
+	return body
+}
+
+// CreateFilesystem creates a new filesystem on the pool.
+func (p *Pool) CreateFilesystem(
+	nasServer *NasServer, opts ...Option,
+) (*Filesystem, error) {
+
+	body := newCreateFilesystemBody(p, nasServer, opts...)
 
 	fields := map[string]interface{}{
 		"requestBody": body,
 	}
-	logger := log.WithFields(fields)
+	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
 	var createdId string
 	var err error
-	logger.Debug("creating filesystem")
+	log.Debug("creating filesystem")
 	if createdId, err = p.unity.PostOnType(
 		typeStorageResource, actionCreateFilesystem, body,
 	); err != nil {
 		return nil, errors.Wrap(err, msg.withMessage("create filesystem failed").String())
 	}
 
-	logger.WithField("createdFilesystemId", createdId).Debug("filesystem created")
+	log.WithField("createdFilesystemId", createdId).Debug("filesystem created")
 
 	createdFs, err := p.unity.GetFilesystemById(createdId)
 	if err != nil {

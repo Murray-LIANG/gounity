@@ -43,7 +43,7 @@ func TestCreateLun(t *testing.T) {
 	pool, err := ctx.Unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
-	lun, err := pool.CreateLun("lun-gounity", 3)
+	lun, err := pool.CreateLun(gounity.NameOpt("lun-gounity"), gounity.SizeGBOpt(3))
 	assert.Nil(t, err)
 
 	assert.Equal(t, "sv_1", lun.Id)
@@ -57,7 +57,7 @@ func TestCreateLunNameExist(t *testing.T) {
 	pool, err := ctx.Unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
-	_, err = pool.CreateLun("lun-name-exist-gounity", 3)
+	_, err = pool.CreateLun(gounity.NameOpt("lun-name-exist-gounity"), gounity.SizeGBOpt(3))
 	assert.NotNil(t, err)
 
 	assert.True(t, gounity.IsUnityLunNameExistError(err))
