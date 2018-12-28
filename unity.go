@@ -102,7 +102,7 @@ func NewUnity(
 	logger.Debug("gounity connection initializing")
 
 	if mgmtIp == "" {
-		return nil, errors.New(msg.withMessage("mgmtIp is required").String())
+		return nil, errors.Errorf("mgmtIp is required: %s", msg)
 	}
 
 	opts := NewRestClientOptions(insecure, traceHttp)
@@ -111,9 +111,7 @@ func NewUnity(
 
 	restClient, err := NewRestClient(context.Background(), host, username, password, opts)
 	if err != nil {
-		return nil, errors.Wrap(
-			err, msg.withMessage("failed to create rest client").String(),
-		)
+		return nil, errors.Wrapf(err, "failed to create rest client: %s", msg)
 	}
 
 	unity := &Unity{client: restClient}
@@ -139,12 +137,10 @@ func (u *Unity) GetInstanceById(
 	if err := u.client.Get(
 		context.Background(), queryInstanceUrl(resType, id, fields), nil, resp,
 	); err != nil {
-		return errors.Wrap(err, msg.withMessage("query instance failed").String())
+		return errors.Wrapf(err, "query instance failed: %s", msg)
 	}
 	if err := json.Unmarshal(resp.Content, instance); err != nil {
-		return errors.Wrap(
-			err, msg.withMessagef("decode to %v failed", instance).String(),
-		)
+		return errors.Wrapf( err, "decode to %v failed: %s", instance, msg)
 	}
 	return nil
 }
@@ -176,7 +172,7 @@ func (u *Unity) GetCollection(
 	if err := u.client.Get(
 		context.Background(), queryCollectionUrl(resType, fields, filter), nil, resp,
 	); err != nil {
-		return nil, errors.Wrap(err, msg.withMessage("query collection failed").String())
+		return nil, errors.Wrapf(err, "query collection failed: %s", msg)
 	}
 	return resp.Entries, nil
 }
@@ -208,7 +204,7 @@ func (u *Unity) PostOnType(
 	if err := u.client.Post(
 		context.Background(), postTypeUrl(typeName, action), nil, body, resp,
 	); err != nil {
-		return "", errors.Wrap(err, msg.withMessage("post on type failed").String())
+		return "", errors.Wrapf(err, "post on type failed: %s", msg)
 	}
 
 	return resp.Content.StorageResource.Id, nil
@@ -230,7 +226,7 @@ func (u *Unity) PostOnInstance(
 	if err := u.client.Post(
 		context.Background(), postInstanceUrl(typeName, resId, action), nil, body, nil,
 	); err != nil {
-		return errors.Wrap(err, msg.withMessage("post on instance failed").String())
+		return errors.Wrapf(err, "post on instance failed: %s", msg)
 	}
 	return nil
 }

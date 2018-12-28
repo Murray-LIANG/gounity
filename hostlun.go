@@ -23,18 +23,16 @@ func (u *Unity) FilterHostLunByHostAndLun(hostId, lunId string) (*HostLUN, error
 
 	hostLuns, err := u.FilterHostLUNs(filter)
 	if err != nil {
-		return nil, errors.Wrap(err, msg.withMessage("filter hostluns failed").String())
+		return nil, errors.Wrapf(err, "filter hostluns failed: %s", msg)
 	}
 	if len(hostLuns) == 0 {
-		return nil, errors.Wrap(
-			err, msg.withMessage("filter returned 0 hostlun").String(),
-		)
+		return nil, errors.Wrapf(err, "filter returned 0 hostlun: %s", msg)
 	}
 	if len(hostLuns) > 1 {
-		return nil, errors.Wrap(
-			err, msg.withField("numOfHostLun",
-				len(hostLuns)).withMessage(
-				"filter returned more than one hostluns").String(),
+		return nil, errors.Wrapf(
+			err,
+			"filter returned more than one hostluns: %s",
+			msg.withField("numOfHostLun", len(hostLuns)),
 		)
 	}
 	return hostLuns[0], nil

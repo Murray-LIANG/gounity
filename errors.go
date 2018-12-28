@@ -39,28 +39,19 @@ func (m *message) String() string {
 }
 
 func (m *message) withField(key string, value interface{}) *message {
-	if m.fields == nil {
-		m.fields = map[string]interface{}{}
-	}
-	m.fields[key] = value
-	return m
+	return m.withFields(map[string]interface{}{key: value})
 }
 
 func (m *message) withFields(fields map[string]interface{}) *message {
-	for k, v := range fields {
-		m = m.withField(k, v)
+	res := newMessage()
+	res.fields = map[string]interface{}{}
+	for k, v := range m.fields {
+		res.fields[k] = v
 	}
-	return m
-}
-
-func (m *message) withMessage(msg string) *message {
-	m.message = msg
-	return m
-}
-
-func (m *message) withMessagef(format string, args ...interface{}) *message {
-	m.message = fmt.Sprintf(format, args...)
-	return m
+	for k, v := range fields {
+		res.fields[k] = v
+	}
+	return res
 }
 
 func newMessage() *message {

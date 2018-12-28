@@ -40,14 +40,12 @@ func (h *Host) Attach(lun *Lun) (uint16, error) {
 	if err := h.unity.PostOnInstance(
 		typeStorageResource, lun.Id, actionModifyLun, body,
 	); err != nil {
-		return 0, errors.Wrap(err, msg.withMessage("attach lun to host failed").String())
+		return 0, errors.Wrapf(err, "attach lun to host failed: %s", msg)
 	}
 
 	hostLun, err := h.unity.FilterHostLunByHostAndLun(h.Id, lun.Id)
 	if err != nil {
-		return 0, errors.Wrap(
-			err, msg.withMessage("filter hostlun by host and lun failed").String(),
-		)
+		return 0, errors.Wrapf(err, "filter hostlun by host and lun failed: %s", msg)
 	}
 	return hostLun.Hlu, nil
 }

@@ -101,9 +101,8 @@ func (c *restClient) pingPong(
 
 	fullURL, err := url.Parse(strings.Join(urlParts, "/"))
 	if err != nil {
-		return nil, errors.Wrap(
-			err,
-			msg.withMessagef("parse url failed: %v", urlParts).String(),
+		return nil, errors.Wrapf(
+			err, "parse url failed: %s", msg.withField("urlParts", urlParts),
 		)
 	}
 
@@ -118,9 +117,7 @@ func (c *restClient) pingPong(
 		bodyBuffer := &bytes.Buffer{}
 		enc := json.NewEncoder(bodyBuffer)
 		if err = enc.Encode(body); err != nil {
-			return nil, errors.Wrap(
-				err, msg.withMessage("encode request body failed").String(),
-			)
+			return nil, errors.Wrapf( err, "encode request body failed: %s", msg)
 		}
 		req, err = http.NewRequest(method, fullURL.String(), bodyBuffer)
 		setDefaultContentType(
@@ -130,7 +127,7 @@ func (c *restClient) pingPong(
 	}
 
 	if err != nil {
-		return nil, errors.Wrap(err, msg.withMessage("new request failed").String())
+		return nil, errors.Wrapf(err, "new request failed: %s", msg)
 	}
 
 	isContentTypeSet := req.Header.Get(HeaderKeyContentType) != ""
@@ -160,7 +157,7 @@ func (c *restClient) doWithRetryOnce(
 		req = req.WithContext(ctx)
 		resp, err := c.http.Do(req)
 		if err != nil {
-			return nil, errors.Wrap(err, msg.withMessage("http request failed").String())
+			return nil, errors.Wrapf(err, "http request failed: %s", msg)
 		}
 		if c.traceHttp {
 			traceResponse(ctx, resp)
@@ -168,7 +165,7 @@ func (c *restClient) doWithRetryOnce(
 		c.csrfToken = resp.Header.Get("EMC-CSRF-TOKEN")
 		return resp, nil
 	}
-	return nil, errors.Wrap(err, msg.withMessage("http request failed").String())
+	return nil, errors.Wrapf(err, "http request failed: %s", msg)
 }
 
 // DoWithHeaders sends a REST request with headers.
@@ -189,7 +186,7 @@ func (c *restClient) DoWithHeaders(
 
 	rawResp, err := c.pingPong(ctx, msg, method, path, headers, body)
 	if err != nil {
-		return errors.Wrap(err, msg.String())
+		return errors.Wrapf(err, "http request with headers failed: %s", msg)
 	}
 	defer rawResp.Body.Close()
 
@@ -202,17 +199,14 @@ func (c *restClient) DoWithHeaders(
 		}
 		dec := json.NewDecoder(rawResp.Body)
 		if err = dec.Decode(resp); err != nil && err != io.EOF {
-			return errors.Wrap(
-				err,
-				msg.withMessagef(
-					"unable to decode response into %+v", resp).String(),
-			)
+			return errors.Wrapf( err, "unable to decode response into %+v: %s", resp, msg)
 		}
 	default:
 		unityError, err := ParseUnityError(rawResp.Body)
 		if err != nil {
-			return errors.Wrap(
-				err, msg.withField("status code", rawResp.StatusCode).String(),
+			return errors.Wrapf(
+				err,
+				"unknown error: %s", msg.withField("status code", rawResp.StatusCode),
 			)
 		}
 		return unityError
