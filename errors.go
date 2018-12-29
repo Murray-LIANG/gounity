@@ -7,11 +7,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+// IsUnityError returns true if err is an unity error.
 func IsUnityError(err error) bool {
 	_, ok := errors.Cause(err).(*unityError)
 	return ok
 }
 
+// GetUnityErrorStatusCode returns the unity error code.
 func GetUnityErrorStatusCode(err error) int {
 	if e, ok := errors.Cause(err).(*unityError); ok {
 		return e.HttpStatusCode

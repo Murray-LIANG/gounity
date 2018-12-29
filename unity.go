@@ -9,7 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 //go:generate go run cmd/modelgen/modelgen.go -w cmd/modelgen
@@ -96,10 +96,10 @@ func NewUnity(
 		"insecure":  insecure,
 		"traceHttp": traceHttp,
 	}
-	logger := log.WithFields(fields)
+	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
-	logger.Debug("gounity connection initializing")
+	log.Debug("gounity connection initializing")
 
 	if mgmtIp == "" {
 		return nil, errors.Errorf("mgmtIp is required: %s", msg)

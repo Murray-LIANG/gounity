@@ -82,8 +82,10 @@ func buildUrl(baseURL, fields string, filter *filter) string {
 }
 
 func queryCollectionUrl(res, fields string, filter *filter) string {
-	return buildUrl(strings.Join([]string{pathAPITypes, res, "instances"}, "/"), fields,
-		filter)
+	return buildUrl(
+		strings.Join([]string{pathAPITypes, res, "instances"}, "/"),
+		fields, filter,
+	)
 }
 
 func queryInstanceUrl(res, id, fields string) string {
@@ -95,7 +97,10 @@ func postTypeUrl(typeName, action string) string {
 }
 
 func postInstanceUrl(typeName, resId, action string) string {
-	return strings.Join([]string{pathAPIInstances, typeName, resId, "action", action}, "/")
+	return strings.Join(
+		[]string{pathAPIInstances, typeName, resId, "action", action},
+		"/",
+	)
 }
 
 // UnityErrorMessage defines the error message struct returned by Unity.

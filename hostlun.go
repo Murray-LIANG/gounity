@@ -12,7 +12,8 @@ type HostLUNOperator interface {
 
 // FilterHostLunByHostAndLun filters the `HostLun` by given its host Id and Lun Id.
 func (u *Unity) FilterHostLunByHostAndLun(hostId, lunId string) (*HostLUN, error) {
-	filter := NewFilterf(`host eq "%s"`, hostId).Andf(`lun eq "%s"`, lunId)
+
+	filter := NewFilterOn("host").Eq(hostId).And(NewFilterOn("lun").Eq(lunId))
 
 	fields := map[string]interface{}{
 		"hostId": hostId,
