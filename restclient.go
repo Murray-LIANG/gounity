@@ -6,10 +6,12 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"golang.org/x/net/publicsuffix"
@@ -59,19 +61,25 @@ func NewRestClient(
 	if err != nil {
 		return nil, err
 	}
+
 	c := &restClient{
-		http: &http.Client{Jar: cookieJar},
+		http: &http.Client{
+			Jar: cookieJar,
+			Transport: &http.Transport{
+				Dial: (&net.Dialer{
+					Timeout:   5 * time.Second,
+					KeepAlive: 10 * time.Second,
+				}).Dial,
+				TLSHandshakeTimeout: 10 * time.Second,
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: opts.insecure,
+				},
+			},
+		},
 		host: host, username: username, password: password,
 		traceHttp: opts.traceHttp,
 	}
 
-	if opts.insecure {
-		c.http.Transport = &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	}
 	return c, nil
 }
 

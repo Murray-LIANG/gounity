@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Murray-LIANG/gounity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +18,7 @@ var (
 )
 
 func TestE2EGetPools(t *testing.T) {
-	u, err := NewUnity(*mgmtIp, *username, *password, true)
+	u, err := gounity.NewUnity(*mgmtIp, *username, *password, true)
 	assert.Nilf(t, err, "cannot connect to unity: %v", *mgmtIp)
 
 	pools, err := u.GetPools()
