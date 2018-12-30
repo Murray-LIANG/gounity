@@ -35,6 +35,36 @@ func TestGetPools(t *testing.T) {
 	assert.EqualValues(t, []string{"pool_1", "pool_2", "pool_7", "pool_9"}, ids)
 }
 
+func TestNewPoolByIdThenRefresh(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool:= ctx.Unity.NewPoolById("pool_1")
+	assert.Equal(t, "pool_1", pool.Id)
+	assert.Empty(t, pool.Name)
+
+	err = pool.Refresh()
+	assert.Nil(t, err)
+	assert.Equal(t, "pool_1", pool.Id)
+	assert.Equal(t, "Manila_Pool", pool.Name)
+}
+
+func TestNewPoolByNameThenRefresh(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool:= ctx.Unity.NewPoolByName("Manila_Pool")
+	assert.Empty(t, pool.Id)
+	assert.Equal(t, "Manila_Pool", pool.Name)
+
+	err = pool.Refresh()
+	assert.Nil(t, err)
+	assert.Equal(t, "pool_1", pool.Id)
+	assert.Equal(t, "Manila_Pool", pool.Name)
+}
+
 func TestCreateLun(t *testing.T) {
 	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
