@@ -36,7 +36,7 @@ func (p *Pool) CreateLun(opts ...Option) (*Lun, error) {
 	var createdId string
 	var err error
 	log.Debug("creating lun")
-	if createdId, err = p.unity.PostOnType(
+	if createdId, err = p.Unity.PostOnType(
 		typeStorageResource, actionCreateLun, body,
 	); err != nil {
 		return nil, errors.Wrapf(err, "create lun failed: %s", msg)
@@ -44,7 +44,7 @@ func (p *Pool) CreateLun(opts ...Option) (*Lun, error) {
 
 	log.WithField("createdLunId", createdId).Debug("lun created")
 
-	createdLun, err := p.unity.GetLunById(createdId)
+	createdLun, err := p.Unity.GetLunById(createdId)
 	if err != nil {
 		return nil, errors.Wrapf(
 			err,
@@ -89,24 +89,34 @@ func (p *Pool) CreateFilesystem(
 	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
-	var createdId string
-	var err error
 	log.Debug("creating filesystem")
-	if createdId, err = p.unity.PostOnType(
-		typeStorageResource, actionCreateFilesystem, body,
-	); err != nil {
+	resId, err := p.Unity.PostOnType(typeStorageResource, actionCreateFilesystem, body)
+	if err != nil {
 		return nil, errors.Wrapf(err, "create filesystem failed: %s", msg)
 	}
 
-	log.WithField("createdFilesystemId", createdId).Debug("filesystem created")
+	storageResource, err := p.Unity.GetStorageResourceById(resId)
+	if err != nil {
+		return nil, errors.Wrapf(
+			err, "get created storageResource failed: %s", msg.withField("resId", resId),
+		)
+	}
 
-	createdFs, err := p.unity.GetFilesystemById(createdId)
+	fs := storageResource.Filesystem
+	if fs == nil || fs.Id == "" {
+		return nil, errors.Errorf(
+			"get filesystem from storageResource failed: %s",
+			msg.withField("storageResource", storageResource),
+		)
+	}
+	log.WithField("filesystemId", fs.Id).Debug("filesystem created")
+
+	err = fs.Refresh()
 	if err != nil {
 		return nil, errors.Wrapf(
 			err,
-			"get created filesystem failed: %s",
-			msg.withField("createdFilesystemId", createdId),
+			"get created filesystem failed: %s", msg.withField("filesystemId", fs.Id),
 		)
 	}
-	return createdFs, err
+	return fs, err
 }

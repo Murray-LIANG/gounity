@@ -2,4 +2,4 @@ id,string
 name,string
 health,*Health
 description,string
-storageResource,*StorageResource
+filesystem,*Filesystem

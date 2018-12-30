@@ -41,6 +41,53 @@
                 }
             },
             "response": "empty.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createFilesystem",
+            "body": {
+                "name": "fs-name",
+                "fsParameters": {
+                    "nasServer": {
+                        "id": "nas_1"
+                    },
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472
+                }
+            },
+            "response": "create_filesystem.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1?compact=true&fields=id,name,health,description,filesystem",
+            "response": "res_1.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1/action/modifyFilesystem",
+            "body": {
+                "nfsShareCreate": [
+                    {
+                        "path": "/",
+                        "name": "nfs_1"
+                    }
+                ]
+            },
+            "response": "empty.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1/action/modifyFilesystem",
+            "body": {
+                "nfsShareCreate": [
+                    {
+                        "path": "/",
+                        "name": "nfs_1",
+                        "nfsShareParameters": {
+                            "defaultAccess": 2
+                        }
+                    }
+                ]
+            },
+            "response": "empty.json"
         }
     ]
 }

@@ -1,0 +1,15 @@
+{
+    "@base": "https://10.245.101.39/api/types/storageResource/action/createFilesystem",
+    "updated": "2018-06-19T08:07:21.345Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "/res_1"
+        }
+    ],
+    "content": {
+        "storageResource": {
+            "id": "res_1"
+        }
+    }
+}

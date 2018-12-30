@@ -1,0 +1,31 @@
+{
+    "@base": "https://10.245.101.39/api/types/filesystem/instances?fields=id,name,health,description,storageResource&per_page=2000&compact=true",
+    "updated": "2018-12-29T06:39:36.130Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "fs_1",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_APP_FS_OK"
+                    ],
+                    "descriptions": [
+                        "This storage resource is operating normally. No action is required."
+                    ]
+                },
+                "name": "fs_1",
+                "description": "",
+                "storageResource": {
+                    "id": "res_1"
+                }
+            }
+        }
+    ]
+}

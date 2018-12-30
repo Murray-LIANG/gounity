@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"reflect"
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -65,6 +66,8 @@ type UnityConnector interface {
 	PostOnInstance(
 		typeName, resId, action string, body map[string]interface{},
 	) error
+
+	StorageResourceOperatorGen
 
 	PoolOperatorGen
 
@@ -139,10 +142,59 @@ func (u *Unity) GetInstanceById(
 	); err != nil {
 		return errors.Wrapf(err, "query instance failed: %s", msg)
 	}
-	if err := json.Unmarshal(resp.Content, instance); err != nil {
-		return errors.Wrapf( err, "decode to %v failed: %s", instance, msg)
+	err := u.unmarshalResource(resp.Content, instance)
+	if err != nil {
+		return errors.Wrapf(err, "decode to instance failed: %s", msg)
 	}
 	return nil
+}
+
+func (u *Unity) unmarshalResource(data []byte, instance interface{}) error {
+	if err := json.Unmarshal(data, instance); err != nil {
+		return errors.Wrapf(err, "decode data %s to %v failed", string(data), instance)
+	}
+	setUnity(reflect.ValueOf(instance), u)
+	return nil
+}
+
+func setUnity(parentInst reflect.Value, unity UnityConnector) {
+	if parentInst.Kind() != reflect.Ptr {
+		logrus.Debugf("not a pointer, skip setting field Unity: %s", parentInst.Kind())
+		return
+	}
+	parentStruct := parentInst.Elem()
+	if parentStruct.Kind() != reflect.Struct {
+		logrus.Debugf("not a struct, skip setting field Unity: %s", parentStruct.Kind())
+		return
+	}
+	unityField := parentStruct.FieldByName("Unity")
+	if !unityField.IsValid() {
+		logrus.Debugf(
+			"not have Unity field, skip setting field Unity: %s", parentStruct.Type(),
+		)
+		return
+	}
+	if !reflect.TypeOf(unity).Implements(unityField.Type()) {
+		logrus.Debugf(
+			"Unity field is not of UnityConnector type, skip setting field Unity: %s",
+			unityField.Type(),
+		)
+		return
+	}
+	unityField.Set(reflect.ValueOf(unity))
+	logrus.Debugf("Unity field set on type: %s", parentStruct.Type().Name())
+
+	for i := 0; i < parentStruct.NumField(); i++ {
+		f := parentStruct.Field(i)
+		switch f.Kind() {
+		case reflect.Slice:
+			for j := 0; j < f.Len(); j++ {
+				setUnity(f.Index(j), unity)
+			}
+		default:
+			setUnity(f, unity)
+		}
+	}
 }
 
 // GetInstanceByName queries instance via name.
@@ -181,11 +233,6 @@ type storageResourceCreateResp struct {
 	Content struct {
 		StorageResource *StorageResource `json:"storageResource,omitempty"`
 	} `json:"content"`
-}
-
-// StorageResource defines Unity corresponding storage resource(like pool, Lun .etc).
-type StorageResource struct {
-	Id string `json:"id"`
 }
 
 // PostOnType sends POST request on resource type.

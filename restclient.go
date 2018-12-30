@@ -117,7 +117,7 @@ func (c *restClient) pingPong(
 		bodyBuffer := &bytes.Buffer{}
 		enc := json.NewEncoder(bodyBuffer)
 		if err = enc.Encode(body); err != nil {
-			return nil, errors.Wrapf( err, "encode request body failed: %s", msg)
+			return nil, errors.Wrapf(err, "encode request body failed: %s", msg)
 		}
 		req, err = http.NewRequest(method, fullURL.String(), bodyBuffer)
 		setDefaultContentType(
@@ -199,7 +199,7 @@ func (c *restClient) DoWithHeaders(
 		}
 		dec := json.NewDecoder(rawResp.Body)
 		if err = dec.Decode(resp); err != nil && err != io.EOF {
-			return errors.Wrapf( err, "unable to decode response into %+v: %s", resp, msg)
+			return errors.Wrapf(err, "unable to decode response into %+v: %s", resp, msg)
 		}
 	default:
 		unityError, err := ParseUnityError(rawResp.Body)

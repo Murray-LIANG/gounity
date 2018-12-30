@@ -1,0 +1,16 @@
+{
+    "content": {
+        "id": "nas_1",
+        "name": "nas-server",
+        "health": {
+            "value": 5,
+            "descriptionIds": [
+                "ALRT_COMPONENT_OK"
+            ],
+            "descriptions": [
+                "The component is operating normally. No action is required."
+            ]
+        }
+    }
+}
+

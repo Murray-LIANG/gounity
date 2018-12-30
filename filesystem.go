@@ -41,25 +41,19 @@ func (fs *Filesystem) CreateNfsShare(
 	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
-	var createdId string
-	var err error
-
 	log.Debug("creating nfs share")
-	if createdId, err = fs.unity.PostOnType(
-		typeStorageResource, actionModifyFilesystem, body,
-	); err != nil {
+	err := fs.Unity.PostOnInstance(
+		typeStorageResource, fs.StorageResource.Id, actionModifyFilesystem, body,
+	)
+	if err != nil {
 		return nil, errors.Wrapf(err, "create nfs share failed: %s", msg)
 	}
 
-	log.WithField("createdNfsShareId", createdId).Debug("nfs share created")
-
-	created, err := fs.unity.GetNfsShareById(createdId)
-	if err != nil {
-		return nil, errors.Wrapf(
-			err,
-			"get created nfs share failed: %s",
-			msg.withField("createdNfsShareId", createdId),
-		)
+	nfs := fs.Unity.NewNfsShareByName(name)
+	if err = nfs.Refresh(); err != nil {
+		return nil, errors.Wrapf(err, "get created nfs share failed: %s", msg)
 	}
-	return created, err
+
+	log.WithField("createdNfsShareId", nfs.Id).Debug("nfs share created")
+	return nfs, err
 }

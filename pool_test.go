@@ -62,3 +62,22 @@ func TestCreateLunNameExist(t *testing.T) {
 
 	assert.True(t, gounity.IsUnityLunNameExistError(err))
 }
+
+func TestCreateFilesystem(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	nas, err := ctx.Unity.GetNasServerById("nas_1")
+	assert.Nil(t, err)
+
+	fs, err := pool.CreateFilesystem(
+		nas, gounity.NameOpt("fs-name"), gounity.SizeGBOpt(3),
+	)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "fs_1", fs.Id)
+}

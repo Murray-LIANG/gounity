@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/nfsShare/instances?compact=true&fields=id,name,description,exportPaths",
+            "response": "all.json"
+        },
+        {
+            "url": "/api/instances/nfsShare/name:nfs_1?compact=true&fields=id,name,description,exportPaths",
+            "response": "nfsshare_1.json"
+        }
+    ]
+}

@@ -3,7 +3,6 @@
 package {{ .PackageName }}
 {{ if not .IsEmbedded }}
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -49,7 +48,7 @@ func (u *Unity) New{{ .CapTypeName }}ById(
 
 	return &{{ .CapTypeName }}{
 		Resource: Resource{
-			typeName: typeName{{ .CapTypeName }}, typeFields: typeFields{{ .CapTypeName }}, unity: u,
+			typeName: typeName{{ .CapTypeName }}, typeFields: typeFields{{ .CapTypeName }}, Unity: u,
 		},
 		Id: id,
 	}
@@ -63,7 +62,7 @@ func (u *Unity) New{{ .CapTypeName }}ByName(
 
 	return &{{ .CapTypeName }}{
 		Resource: Resource{
-			typeName: typeName{{ .CapTypeName }}, typeFields: typeFields{{ .CapTypeName }}, unity: u,
+			typeName: typeName{{ .CapTypeName }}, typeFields: typeFields{{ .CapTypeName }}, Unity: u,
 		},
 		Name: name,
 	}
@@ -86,15 +85,15 @@ func (r *{{ .CapTypeName }}) Refresh() error {
 	switch r.Id {
 {{ if .HasNameField }}
 	case "":
-		if latest, err = r.unity.Get{{ .CapTypeName }}ByName(r.Name); err != nil {
+		if latest, err = r.Unity.Get{{ .CapTypeName }}ByName(r.Name); err != nil {
 			return err
 		}
-		r = latest{{ end }}
+		*r = *latest{{ end }}
 	default:
-		if latest, err = r.unity.Get{{ .CapTypeName }}ById(r.Id); err != nil {
+		if latest, err = r.Unity.Get{{ .CapTypeName }}ById(r.Id); err != nil {
 			return err
 		}
-		r = latest
+		*r = *latest
 	}
 	return nil
 }
@@ -158,8 +157,8 @@ func (u *Unity) Fill{{ .CapTypeName }}s(
 	resSlice := []*{{ .CapTypeName }}{}
 	for _, entry := range respEntries {
 		res := u.New{{ .CapTypeName }}ById("") // empty id for fake `{{ .CapTypeName }}` object
-		if err := json.Unmarshal(entry.Content, res); err != nil {
-			return nil, errors.Wrapf(err, "decode to %v failed", res)
+		if err := u.unmarshalResource(entry.Content, res); err != nil {
+			return nil, errors.Wrap(err, "decode to instance failed")
 		}
 		resSlice = append(resSlice, res)
 	}

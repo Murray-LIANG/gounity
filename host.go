@@ -37,13 +37,13 @@ func (h *Host) Attach(lun *Lun) (uint16, error) {
 	msg := newMessage().withFields(fields)
 
 	log.Debug("attaching lun to host")
-	if err := h.unity.PostOnInstance(
+	if err := h.Unity.PostOnInstance(
 		typeStorageResource, lun.Id, actionModifyLun, body,
 	); err != nil {
 		return 0, errors.Wrapf(err, "attach lun to host failed: %s", msg)
 	}
 
-	hostLun, err := h.unity.FilterHostLunByHostAndLun(h.Id, lun.Id)
+	hostLun, err := h.Unity.FilterHostLunByHostAndLun(h.Id, lun.Id)
 	if err != nil {
 		return 0, errors.Wrapf(err, "filter hostlun by host and lun failed: %s", msg)
 	}

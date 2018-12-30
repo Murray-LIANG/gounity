@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/nasServer/instances?compact=true&fields=id,name,health",
+            "response": "all.json"
+        },
+        {
+            "url": "/api/instances/nasServer/nas_1?compact=true&fields=id,name,health",
+            "response": "nas_1.json"
+        }
+    ]
+}
