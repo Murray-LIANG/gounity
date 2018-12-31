@@ -1,11 +1,19 @@
 {
     "indices": [
         {
-            "url": "/api/types/nfsShare/instances?compact=true&fields=id,name,description,exportPaths",
+            "url": "/api/types/nfsShare/instances?compact=true&fields=id,name,description,exportPaths,filesystem,filesystem.storageResource",
             "response": "all.json"
         },
         {
-            "url": "/api/instances/nfsShare/name:nfs_1?compact=true&fields=id,name,description,exportPaths",
+            "url": "/api/instances/nfsShare/name:nfs_1?compact=true&fields=id,name,description,exportPaths,filesystem,filesystem.storageResource",
+            "response": "nfsshare_1.json"
+        },
+        {
+            "url": "/api/instances/nfsShare/name:nfsshare-name?compact=true&fields=id,name,description,exportPaths,filesystem,filesystem.storageResource",
+            "response": "nfsshare_1.json"
+        },
+        {
+            "url": "/api/instances/nfsShare/NFSShare_1?compact=true&fields=id,name,description,exportPaths,filesystem,filesystem.storageResource",
             "response": "nfsshare_1.json"
         }
     ]

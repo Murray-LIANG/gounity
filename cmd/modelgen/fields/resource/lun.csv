@@ -14,4 +14,5 @@ snapCount,uint32
 snapWwn,string
 snapsSize,uint64
 snapsSizeAllocated,uint64
+storageResource,*StorageResource
 wwn,string

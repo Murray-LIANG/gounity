@@ -2,3 +2,5 @@ id,string
 name,string
 description,string
 exportPaths,[]string
+filesystem,*Filesystem
+filesystem.storageResource

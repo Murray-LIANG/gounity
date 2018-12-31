@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func newCreateNfsShareBody(
+func newExportNfsShareBody(
 	fs *Filesystem, name string, opts ...Option,
 ) map[string]interface{} {
 	o := NewOptions(opts...)
@@ -27,12 +27,12 @@ func newCreateNfsShareBody(
 	}
 }
 
-// CreateNfsShare exports the nfs share from this filesystem.
-func (fs *Filesystem) CreateNfsShare(
+// ExportNfsShare exports the nfs share from this filesystem.
+func (fs *Filesystem) ExportNfsShare(
 	name string, opts ...Option,
 ) (*NfsShare, error) {
 
-	body := newCreateNfsShareBody(fs, name, opts...)
+	body := newExportNfsShareBody(fs, name, opts...)
 
 	fields := map[string]interface{}{
 		"requestBody": body,
@@ -41,19 +41,19 @@ func (fs *Filesystem) CreateNfsShare(
 	log := logrus.WithFields(fields)
 	msg := newMessage().withFields(fields)
 
-	log.Debug("creating nfs share")
+	log.Debug("exporting nfs share")
 	err := fs.Unity.PostOnInstance(
 		typeStorageResource, fs.StorageResource.Id, actionModifyFilesystem, body,
 	)
 	if err != nil {
-		return nil, errors.Wrapf(err, "create nfs share failed: %s", msg)
+		return nil, errors.Wrapf(err, "export nfs share failed: %s", msg)
 	}
 
 	nfs := fs.Unity.NewNfsShareByName(name)
 	if err = nfs.Refresh(); err != nil {
-		return nil, errors.Wrapf(err, "get created nfs share failed: %s", msg)
+		return nil, errors.Wrapf(err, "get exported nfs share failed: %s", msg)
 	}
 
-	log.WithField("createdNfsShareId", nfs.Id).Debug("nfs share created")
+	log.WithField("exportNfsShareId", nfs.Id).Debug("nfs share exported")
 	return nfs, err
 }

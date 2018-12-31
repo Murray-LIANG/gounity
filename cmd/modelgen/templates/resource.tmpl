@@ -73,7 +73,7 @@ func (r *{{ .CapTypeName }}) Refresh() error {
 
 	if r.Id == ""{{ if .HasNameField }} && r.Name == ""{{ end }} {
 		return fmt.Errorf(
-			"cannot refresh on resource without Id nor Name, resource:%v", r,
+			"cannot refresh on {{ .TypeName }} without Id nor Name, resource:%v", r,
 		)
 	}
 
@@ -109,7 +109,7 @@ func (u *Unity) Get{{ .CapTypeName }}ById(
 		if IsUnityError(err) {
 			return nil, err
 		}
-		return nil, errors.Wrap(err, "get {{ .CapTypeName }} by id failed")
+		return nil, errors.Wrap(err, "get {{ .TypeName }} by id failed")
 	}
 	return res, nil
 }
@@ -122,7 +122,7 @@ func (u *Unity) Get{{ .CapTypeName }}ByName(
 
 	res := u.New{{ .CapTypeName }}ByName(name)
 	if err := u.GetInstanceByName(res.typeName, name, res.typeFields, res); err != nil {
-		return nil, errors.Wrap(err, "get {{ .CapTypeName }} by name failed")
+		return nil, errors.Wrap(err, "get {{ .TypeName }} by name failed")
 	}
 	return res, nil
 }{{ end }}
@@ -140,11 +140,11 @@ func (u *Unity) Filter{{ .CapTypeName }}s(
 
 	respEntries, err := u.GetCollection(typeName{{ .CapTypeName }}, typeFields{{ .CapTypeName }}, filter)
 	if err != nil {
-		return nil, errors.Wrap(err, "filter {{ .CapTypeName }} failed")
+		return nil, errors.Wrap(err, "filter {{ .TypeName }} failed")
 	}
 	res, err := u.Fill{{ .CapTypeName }}s(respEntries)
 	if err != nil {
-		return nil, errors.Wrap(err, "fill {{ .CapTypeName }}s failed")
+		return nil, errors.Wrap(err, "fill {{ .TypeName }}s failed")
 	}
 	return res, nil
 }
@@ -158,7 +158,7 @@ func (u *Unity) Fill{{ .CapTypeName }}s(
 	for _, entry := range respEntries {
 		res := u.New{{ .CapTypeName }}ById("") // empty id for fake `{{ .CapTypeName }}` object
 		if err := u.unmarshalResource(entry.Content, res); err != nil {
-			return nil, errors.Wrap(err, "decode to instance failed")
+			return nil, errors.Wrap(err, "decode to {{ .CapTypeName }} failed")
 		}
 		resSlice = append(resSlice, res)
 	}
@@ -168,14 +168,33 @@ func (u *Unity) Fill{{ .CapTypeName }}s(
 // Repr represents a `{{ .TypeName }}` object using its id.
 func (r *{{ .CapTypeName }}) Repr() *idRepresent {
 
-	log := logrus.WithField("resource", r)
+	log := logrus.WithField("{{ .TypeName }}", r)
 	if r.Id == "" {
-		log.Info("refreshing resource from unity")
+		log.Info("refreshing {{ .TypeName }} from unity")
 		err := r.Refresh()
 		if err != nil {
-			log.WithError(err).Error("refresh resource from unity failed")
+			log.WithError(err).Error("refresh {{ .TypeName }} from unity failed")
 			return nil
 		}
 	}
 	return &idRepresent{Id: r.Id}
-}{{ end }}
+}{{ if .HasStorageResourceField }}
+
+// Delete deletes a {{ .TypeName }} object.
+func (r *{{ .CapTypeName }}) Delete() error {
+
+	log := logrus.WithField("{{ .TypeName }}", r)
+	if r.StorageResource == nil {
+		log.Info("refreshing {{ .TypeName }} from unity")
+		err := r.Refresh()
+		if err != nil {
+			return errors.Wrap(err, "refresh {{ .TypeName }} from unity failed")
+		}
+	}
+
+	err := r.Unity.DeleteInstance(typeStorageResource, r.StorageResource.Id)
+	if err != nil {
+		return errors.Wrap(err, "delete {{ .TypeName }} from unity failed")
+	}
+	return nil
+}{{ end }}{{ end }}

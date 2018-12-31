@@ -103,6 +103,10 @@ func postInstanceUrl(typeName, resId, action string) string {
 	)
 }
 
+func deleteInstanceUrl(typeName, resId string) string {
+	return strings.Join([]string{pathAPIInstances, typeName, resId}, "/")
+}
+
 // UnityErrorMessage defines the error message struct returned by Unity.
 type unityErrorMessage struct {
 	Message string `json:"en-US"`

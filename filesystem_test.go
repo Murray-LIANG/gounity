@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateNfsShare(t *testing.T) {
+func TestExportNfsShare(t *testing.T) {
 
 	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
@@ -17,13 +17,13 @@ func TestCreateNfsShare(t *testing.T) {
 	fs, err := ctx.Unity.GetFilesystemById("fs_1")
 	assert.Nil(t, err)
 
-	nfs, err := fs.CreateNfsShare("nfs_1")
+	nfs, err := fs.ExportNfsShare("nfs_1")
 	assert.Nil(t, err)
 
 	assert.Equal(t, "NFSShare_1", nfs.Id)
 }
 
-func TestCreateNfsShareWithDefaultAccess(t *testing.T) {
+func TestExportNfsShareWithOpt(t *testing.T) {
 
 	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
@@ -32,10 +32,22 @@ func TestCreateNfsShareWithDefaultAccess(t *testing.T) {
 	fs, err := ctx.Unity.GetFilesystemById("fs_1")
 	assert.Nil(t, err)
 
-	nfs, err := fs.CreateNfsShare(
+	nfs, err := fs.ExportNfsShare(
 		"nfs_1", gounity.DefaultAccessOpt(gounity.NFSShareDefaultAccessReadWrite),
 	)
 	assert.Nil(t, err)
 
 	assert.Equal(t, "NFSShare_1", nfs.Id)
+}
+
+func TestFilesystemDelete(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	fs := ctx.Unity.NewFilesystemById("fs_1")
+	assert.Nil(t, err)
+
+	err = fs.Delete()
+	assert.Nil(t, err)
 }

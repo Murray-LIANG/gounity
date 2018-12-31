@@ -67,6 +67,8 @@ type UnityConnector interface {
 		typeName, resId, action string, body map[string]interface{},
 	) error
 
+	DeleteInstance(resType, id string) error
+
 	StorageResourceOperatorGen
 
 	PoolOperatorGen
@@ -274,6 +276,22 @@ func (u *Unity) PostOnInstance(
 		context.Background(), postInstanceUrl(typeName, resId, action), nil, body, nil,
 	); err != nil {
 		return errors.Wrapf(err, "post on instance failed: %s", msg)
+	}
+	return nil
+}
+
+// DeleteInstance deletes the instance.
+func (u *Unity) DeleteInstance(resType, id string) error {
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"resourceType": resType,
+			"id":           id,
+		},
+	)
+	if err := u.client.Delete(
+		context.Background(), deleteInstanceUrl(resType, id), nil, nil, nil,
+	); err != nil {
+		return errors.Wrapf(err, "delete instance failed: %s", msg)
 	}
 	return nil
 }

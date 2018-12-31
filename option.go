@@ -121,12 +121,19 @@ func DefaultAccessOpt(da NFSShareDefaultAccessEnum) Option {
 	}
 }
 
-// NewLunParameters constructs `lunParameters` used in `CreateLun`, .etc.
-func (o *Options) NewLunParameters(p *Pool) map[string]interface{} {
+// PushSupportedProtocols adds optional parameter `supportedProtocols`.
+func (o *Options) PushSupportedProtocols(protocol FSSupportedProtocolEnum) {
+	o.push("supportedProtocols", protocol)
+}
 
-	lunParams := map[string]interface{}{"pool": p.Repr()}
-	if size := o.PopSize(); size != nil {
-		lunParams["size"] = size
+// PopSupportedProtocols retrieves optional parameter `supportedProtocols` and removes it from options.
+func (o *Options) PopSupportedProtocols() interface{} {
+	return o.pop("supportedProtocols")
+}
+
+// SupportedProtocolsOpt constructs optional parameter `supportedProtocols`.
+func SupportedProtocolsOpt(protocol FSSupportedProtocolEnum) Option {
+	return func(o *Options) {
+		o.PushSupportedProtocols(protocol)
 	}
-	return lunParams
 }

@@ -6,15 +6,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func newCreateLunBody(p *Pool, opts ...Option) map[string]interface{} {
+func newCreateLunBody(
+	p *Pool, name string, sizeGB uint64, opts ...Option,
+) map[string]interface{} {
 
 	o := NewOptions(opts...)
 	defer o.WarnNotUsedOptions()
 
-	body := map[string]interface{}{"lunParameters": o.NewLunParameters(p)}
-
-	if name := o.PopName(); name != nil {
-		body["name"] = name
+	body := map[string]interface{}{
+		"name": name,
+		"lunParameters": map[string]interface{}{
+			"pool": p.Repr(),
+			"size": gbToBytes(sizeGB),
+		},
 	}
 
 	if ha := o.PopHostAccess(); ha != nil {
@@ -24,8 +28,13 @@ func newCreateLunBody(p *Pool, opts ...Option) map[string]interface{} {
 }
 
 // CreateLun creates a new Lun on the pool.
-func (p *Pool) CreateLun(opts ...Option) (*Lun, error) {
-	body := newCreateLunBody(p, opts...)
+// Parameter - name and sizeGB are required.
+// HostAccessOpt is optional.
+func (p *Pool) CreateLun(
+	name string, sizeGB uint64, opts ...Option,
+) (*Lun, error) {
+
+	body := newCreateLunBody(p, name, sizeGB, opts...)
 
 	fields := map[string]interface{}{
 		"requestBody": body,
@@ -54,34 +63,41 @@ func (p *Pool) CreateLun(opts ...Option) (*Lun, error) {
 	return createdLun, err
 }
 
+func newFsParameters(
+	p *Pool, nasServer *NasServer, sizeGB uint64, o *Options,
+) map[string]interface{} {
+	res := map[string]interface{}{
+		"nasServer": nasServer.Repr(),
+		"pool":      p.Repr(),
+		"size":      gbToBytes(sizeGB),
+	}
+	if protocol := o.PopSupportedProtocols(); protocol != nil {
+		res["supportedProtocols"] = protocol
+	}
+	return res
+}
+
 func newCreateFilesystemBody(
-	p *Pool, nasServer *NasServer, opts ...Option,
+	p *Pool, nasServer *NasServer, name string, sizeGB uint64, opts ...Option,
 ) map[string]interface{} {
 
 	o := NewOptions(opts...)
 	defer o.WarnNotUsedOptions()
 
-	fsParams := map[string]interface{}{
-		"nasServer": nasServer.Repr(),
-		"pool":      p.Repr(),
+	return map[string]interface{}{
+		"name":         name,
+		"fsParameters": newFsParameters(p, nasServer, sizeGB, o),
 	}
-	if size := o.PopSize(); size != nil {
-		fsParams["size"] = size
-	}
-
-	body := map[string]interface{}{"fsParameters": fsParams}
-	if name := o.PopName(); name != nil {
-		body["name"] = name
-	}
-	return body
 }
 
 // CreateFilesystem creates a new filesystem on the pool.
+// Parameters - nasServer, name and sizeGB are required.
+// SupportedProtocolsOpt is optional.
 func (p *Pool) CreateFilesystem(
-	nasServer *NasServer, opts ...Option,
+	nasServer *NasServer, name string, sizeGB uint64, opts ...Option,
 ) (*Filesystem, error) {
 
-	body := newCreateFilesystemBody(p, nasServer, opts...)
+	body := newCreateFilesystemBody(p, nasServer, name, sizeGB, opts...)
 
 	fields := map[string]interface{}{
 		"requestBody": body,
@@ -119,4 +135,64 @@ func (p *Pool) CreateFilesystem(
 		)
 	}
 	return fs, err
+}
+
+func newCreateNfsShareBody(
+	p *Pool, nasServer *NasServer, name string, sizeGB uint64, opts ...Option,
+) map[string]interface{} {
+
+	// Add supportedProtocols to filesystem create.
+	opts = append(opts, SupportedProtocolsOpt(FSSupportedProtocolNFS))
+
+	o := NewOptions(opts...)
+	defer o.WarnNotUsedOptions()
+
+	shareCreate := map[string]interface{}{
+		"path": "/",
+		"name": name,
+	}
+
+	if da := o.PopDefaultAccess(); da != nil {
+		shareCreate["nfsShareParameters"] = map[string]interface{}{
+			"defaultAccess": da,
+		}
+	}
+
+	body := map[string]interface{}{
+		"name":           name,
+		"fsParameters":   newFsParameters(p, nasServer, sizeGB, o),
+		"nfsShareCreate": []interface{}{shareCreate},
+	}
+	return body
+}
+
+// CreateNfsShare creates a new filesystem on the pool then exports a nfs share from it.
+// Parameters - nasServer, name and sizeGB are required.
+// DefaultAccessOpt is optional.
+func (p *Pool) CreateNfsShare(
+	nasServer *NasServer, name string, sizeGB uint64, opts ...Option,
+) (*NfsShare, error) {
+
+	body := newCreateNfsShareBody(p, nasServer, name, sizeGB, opts...)
+
+	fields := map[string]interface{}{
+		"requestBody": body,
+	}
+	log := logrus.WithFields(fields)
+	msg := newMessage().withFields(fields)
+
+	log.Debug("creating filesystem and nfs share")
+	// Ignore the returned resource id, use share name to get the nfs share.
+	_, err := p.Unity.PostOnType(typeStorageResource, actionCreateFilesystem, body)
+	if err != nil {
+		return nil, errors.Wrapf(err, "create filesystem and nfs share failed: %s", msg)
+	}
+
+	nfs := p.Unity.NewNfsShareByName(name)
+	if err = nfs.Refresh(); err != nil {
+		return nil, errors.Wrapf(err, "get created nfs share failed: %s", msg)
+	}
+
+	log.WithField("createdNfsShareId", nfs.Id).Debug("nfs share created")
+	return nfs, err
 }

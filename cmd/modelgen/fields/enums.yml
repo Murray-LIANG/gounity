@@ -26,3 +26,8 @@ NFSShareDefaultAccessEnum:
   2: [ReadWrite, Allow read write access to the share for the hosts.]
   3: [Root, Allow read write root access to the share for the hosts.]
   4: [RoRoot, Allow read only root access to the share for the hosts.]
+
+FSSupportedProtocolEnum:
+  0: [NFS, Only NFS share protocol supported by file system.]
+  1: [CIFS, Only SMB (also known as CIFS) share protocol is supported by file system.]
+  2: [Multiprotocol, Both share protocols NFS and SMB (also known as CIFS) are supported by file system.]

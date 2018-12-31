@@ -5,7 +5,13 @@
         "exportPaths": [
             "10.245.47.97:/nfs_1"
         ],
-        "description": ""
+        "description": "",
+        "filesystem": {
+            "id": "fs_1",
+            "storageResource": {
+                "id": "res_1"
+            }
+        }
     }
 }
 

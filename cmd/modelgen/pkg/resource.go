@@ -60,15 +60,25 @@ func (r *resource) parseFields() *resource {
 
 	for {
 		line, err := reader.ReadString('\n')
+		if line == "" && err != nil {
+			log.Debug("reach end of file")
+			break
+		}
+
 		parts := strings.FieldsFunc(
 			strings.TrimSpace(line),
 			func(c rune) bool { return c == ',' },
 		)
-		if len(parts) < 2 {
-			log.WithField("line", line).Fatal(
-				"each line should at least have 2 items split by comma")
+		if len(parts) == 0 {
+			log.WithField("line", line).Info("empty line")
+			continue
 		}
 		fieldNames = append(fieldNames, parts[0])
+		if len(parts) == 1 {
+			log.WithField("line", line).Info(
+				"line has one item, take it as nested property")
+			continue
+		}
 		description := ""
 		if len(parts) >= 3 {
 			description = strings.Join(parts[2:], ", ")
@@ -79,10 +89,6 @@ func (r *resource) parseFields() *resource {
 			Description: description,
 			JsonSrc:     fmt.Sprintf("`json:\"%s\"`", parts[0]),
 		})
-
-		if err != nil {
-			break
-		}
 	}
 
 	if err != nil && err != io.EOF {
@@ -102,14 +108,15 @@ func (r *resource) GetTemplate() *template.Template {
 func (r *resource) PrepareData() interface{} {
 	r = r.parseFields()
 	return struct {
-		Timestamp   time.Time
-		PackageName string
-		TypeName    string
-		CapTypeName string
-		FieldNames  []string
-		Fields      []field
-		IsEmbedded  bool
-		HasNameField bool
+		Timestamp               time.Time
+		PackageName             string
+		TypeName                string
+		CapTypeName             string
+		FieldNames              []string
+		Fields                  []field
+		IsEmbedded              bool
+		HasNameField            bool
+		HasStorageResourceField bool
 	}{
 		time.Now().UTC(),
 		r.packageName,
@@ -119,6 +126,7 @@ func (r *resource) PrepareData() interface{} {
 		r.fields,
 		r.isEmbedded,
 		contains(r.fieldNames, "name"),
+		contains(r.fieldNames, "storageResource"),
 	}
 }
 

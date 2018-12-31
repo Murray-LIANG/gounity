@@ -46,3 +46,15 @@ func TestGetLuns(t *testing.T) {
 	}
 	assert.EqualValues(t, []string{"sv_1", "sv_3", "sv_16", "sv_17"}, ids)
 }
+
+func TestLunDelete(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	lun := ctx.Unity.NewLunById("sv_1")
+	assert.Nil(t, err)
+
+	err = lun.Delete()
+	assert.Nil(t, err)
+}
