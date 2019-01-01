@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -24,6 +25,8 @@ const (
 	HeaderValueContentTypeJSON = "application/json"
 	// HeaderValueContentTypeBinaryOctetStream is `binary` value of `Content-Type`.
 	HeaderValueContentTypeBinaryOctetStream = "binary/octet-stream"
+
+	emcCsrfTokenName = "EMC-CSRF-TOKEN"
 )
 
 type restClient struct {
@@ -83,20 +86,21 @@ func NewRestClient(
 	return c, nil
 }
 
-func setDefaultContentType(
-	header *http.Header, headers map[string]string, defaultValue string,
-) {
-	if v, ok := headers[HeaderKeyContentType]; ok {
-		defaultValue = v
-	}
-	header.Set(HeaderKeyContentType, defaultValue)
-}
-
 func (c *restClient) pingPong(
-	ctx context.Context, msg *message,
-	method, path string, headers map[string]string, body interface{},
+	ctx context.Context,
+	method, path string,
+	headers map[string]string,
+	body io.Reader,
 ) (*http.Response, error) {
 
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"method":  method,
+			"path":    path,
+			"headers": headers,
+			"body":    body,
+		},
+	)
 	var err error
 
 	urlParts := []string{c.host}
@@ -114,66 +118,104 @@ func (c *restClient) pingPong(
 		)
 	}
 
-	var req *http.Request
-	if reader, ok := body.(io.ReadCloser); ok {
-		req, err = http.NewRequest(method, fullURL.String(), reader)
-		defer reader.Close()
-
-		setDefaultContentType(
-			&req.Header, headers, HeaderValueContentTypeBinaryOctetStream)
-	} else if body != nil {
-		bodyBuffer := &bytes.Buffer{}
-		enc := json.NewEncoder(bodyBuffer)
-		if err = enc.Encode(body); err != nil {
-			return nil, errors.Wrapf(err, "encode request body failed: %s", msg)
-		}
-		req, err = http.NewRequest(method, fullURL.String(), bodyBuffer)
-		setDefaultContentType(
-			&req.Header, headers, HeaderValueContentTypeJSON)
-	} else {
-		req, err = http.NewRequest(method, fullURL.String(), nil)
-	}
-
+	req, err := http.NewRequest(method, fullURL.String(), body)
 	if err != nil {
 		return nil, errors.Wrapf(err, "new request failed: %s", msg)
 	}
 
-	isContentTypeSet := req.Header.Get(HeaderKeyContentType) != ""
-
 	for header, value := range headers {
-		if header == HeaderKeyContentType && isContentTypeSet {
-			continue
-		}
-		req.Header.Add(header, value)
+		req.Header.Set(header, value)
 	}
 	req.SetBasicAuth(c.username, c.password)
-	req.Header.Add("X-EMC-REST-CLIENT", "true")
-	return c.doWithRetryOnce(ctx, req, msg)
+	req.Header.Set("X-EMC-REST-CLIENT", "true")
+	req.Header.Set(emcCsrfTokenName, c.csrfToken)
+
+	if c.traceHttp {
+		traceRequest(ctx, req)
+	}
+	req = req.WithContext(ctx)
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return nil, errors.Wrapf(err, "http request failed: %s", msg)
+	}
+	if c.traceHttp {
+		traceResponse(ctx, resp)
+	}
+	return resp, nil
 }
 
-func (c *restClient) doWithRetryOnce(
-	ctx context.Context, req *http.Request, msg *message,
+func (c *restClient) do(
+	ctx context.Context,
+	method, path string,
+	headers map[string]string,
+	body interface{},
 ) (*http.Response, error) {
 
-	var err error
-	for count := 0; count < 2; count++ {
-		req.Header.Set("EMC-CSRF-TOKEN", c.csrfToken)
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"method":  method,
+			"path":    path,
+			"headers": headers,
+			"body":    body,
+		},
+	)
+	var bodyCache bytes.Buffer
+	var reader io.Reader
+	var readerAgain io.Reader
+	contentType := ""
+	if r, ok := body.(io.ReadCloser); ok {
+		reader = io.TeeReader(r, &bodyCache)
+		defer r.Close()
+		readerAgain = &bodyCache
+		contentType = HeaderValueContentTypeBinaryOctetStream
 
-		if c.traceHttp {
-			traceRequest(ctx, req)
+	} else if body != nil {
+		bodyBuffer := &bytes.Buffer{}
+		enc := json.NewEncoder(bodyBuffer)
+		if err := enc.Encode(body); err != nil {
+			return nil, errors.Wrapf(err, "encode request body failed: %s", msg)
 		}
-		req = req.WithContext(ctx)
-		resp, err := c.http.Do(req)
-		if err != nil {
-			return nil, errors.Wrapf(err, "http request failed: %s", msg)
-		}
-		if c.traceHttp {
-			traceResponse(ctx, resp)
-		}
-		c.csrfToken = resp.Header.Get("EMC-CSRF-TOKEN")
-		return resp, nil
+		reader = io.TeeReader(bodyBuffer, &bodyCache)
+		readerAgain = &bodyCache
+		contentType = HeaderValueContentTypeJSON
 	}
-	return nil, errors.Wrapf(err, "http request failed: %s", msg)
+
+	if contentType != "" {
+		if headers == nil {
+			headers = map[string]string{}
+		}
+		headers[HeaderKeyContentType] = contentType
+	}
+
+	if resp, err := c.pingPong(
+		ctx, method, path, headers, reader,
+	); resp != nil && resp.StatusCode != http.StatusUnauthorized {
+
+		// Update csrf token only when getting unauthorized response
+		return resp, err
+	}
+
+	if err := c.updateCsrf(ctx); err != nil {
+		return nil, errors.Wrapf(err, "try to update csrf token failed: %s", msg)
+	}
+
+	return c.pingPong(ctx, method, path, headers, readerAgain)
+}
+
+func (c *restClient) updateCsrf(ctx context.Context) error {
+	logrus.Debug("updating csrf token")
+
+	resp, err := c.pingPong(ctx, http.MethodGet, "/api/types/system/instances", nil, nil)
+	if err != nil {
+		return errors.Wrapf(err, "update csrf token failed")
+	}
+
+	csrfToken := resp.Header.Get(emcCsrfTokenName)
+	if c.csrfToken != csrfToken {
+		c.csrfToken = csrfToken
+		logrus.Debug("csrf token updated")
+	}
+	return nil
 }
 
 // DoWithHeaders sends a REST request with headers.
@@ -192,7 +234,7 @@ func (c *restClient) DoWithHeaders(
 		},
 	)
 
-	rawResp, err := c.pingPong(ctx, msg, method, path, headers, body)
+	rawResp, err := c.do(ctx, method, path, headers, body)
 	if err != nil {
 		return errors.Wrapf(err, "http request with headers failed: %s", msg)
 	}

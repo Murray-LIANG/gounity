@@ -35,7 +35,7 @@ func (m *message) String() string {
 		strs = append(strs, m.message)
 	}
 	for k, v := range m.fields {
-		strs = append(strs, fmt.Sprintf("%s=%v", k, v))
+		strs = append(strs, fmt.Sprintf("%s=%+v", k, v))
 	}
 	return strings.Join(strs, ",")
 }
