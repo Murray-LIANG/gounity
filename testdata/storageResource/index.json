@@ -16,6 +16,40 @@
         {
             "url": "/api/types/storageResource/action/createLun",
             "body": {
+                "name": "lun-gounity",
+                "lunParameters": {
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472
+                }
+            },
+            "response": "create_lun.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createLun",
+            "body": {
+                "name": "lun-gounity",
+                "lunParameters": {
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472
+                },
+                "hostAccess": [
+                    {
+                        "host":{
+                            "id": "Host_1"
+                        },
+                        "accessMask": 1
+                    }
+                ]
+            },
+            "response": "create_lun.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createLun",
+            "body": {
                 "name": "lun-name-exist-gounity",
                 "lunParameters": {
                     "pool": {
@@ -39,6 +73,144 @@
                         }
                     ]
                 }
+            },
+            "response": "empty.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createFilesystem",
+            "body": {
+                "name": "fs-name",
+                "fsParameters": {
+                    "nasServer": {
+                        "id": "nas_1"
+                    },
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472
+                }
+            },
+            "response": "create_filesystem.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createFilesystem",
+            "body": {
+                "name": "fs-name",
+                "fsParameters": {
+                    "nasServer": {
+                        "id": "nas_1"
+                    },
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472,
+                    "supportedProtocols": 0
+                }
+            },
+            "response": "create_filesystem.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1?compact=true&fields=id,name,health,description,filesystem",
+            "response": "res_1.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1/action/modifyFilesystem",
+            "body": {
+                "nfsShareCreate": [
+                    {
+                        "path": "/",
+                        "name": "nfs_1"
+                    }
+                ]
+            },
+            "response": "empty.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1/action/modifyFilesystem",
+            "body": {
+                "nfsShareCreate": [
+                    {
+                        "path": "/",
+                        "name": "nfs_1",
+                        "nfsShareParameters": {
+                            "defaultAccess": 2
+                        }
+                    }
+                ]
+            },
+            "response": "empty.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createFilesystem",
+            "body": {
+                "name": "nfsshare-name",
+                "fsParameters": {
+                    "nasServer": {
+                        "id": "nas_1"
+                    },
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472,
+                    "supportedProtocols": 0
+                },
+                "nfsShareCreate": [
+                    {
+                        "name": "nfsshare-name",
+                        "path": "/"
+                    }
+                ]
+            },
+            "response": "create_filesystem.json"
+        },
+        {
+            "url": "/api/types/storageResource/action/createFilesystem",
+            "body": {
+                "name": "nfsshare-name",
+                "fsParameters": {
+                    "nasServer": {
+                        "id": "nas_1"
+                    },
+                    "pool": {
+                        "id": "pool_1"
+                    },
+                    "size": 3221225472,
+                    "supportedProtocols": 0
+                },
+                "nfsShareCreate": [
+                    {
+                        "name": "nfsshare-name",
+                        "path": "/",
+                        "nfsShareParameters": {
+                            "defaultAccess": 2
+                        }
+                    }
+                ]
+            },
+            "response": "create_filesystem.json"
+        },
+        {
+            "url": "/api/instances/storageResource/sv_1?compact=true&fields=id,name,health,description,filesystem",
+            "response": "sv_1.json"
+        },
+        {
+            "url": "/api/instances/storageResource/sv_1",
+            "response": "empty.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1",
+            "response": "empty.json"
+        },
+        {
+            "url": "/api/instances/storageResource/res_1/action/modifyFilesystem",
+            "body": {
+                "nfsShareDelete": [
+                    {
+                        "nfsShare": {
+                            "id": "NFSShare_1"
+                        }
+                    }
+                ]
             },
             "response": "empty.json"
         }

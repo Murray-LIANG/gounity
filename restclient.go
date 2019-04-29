@@ -5,14 +5,16 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
+	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -23,112 +25,82 @@ const (
 	HeaderValueContentTypeJSON = "application/json"
 	// HeaderValueContentTypeBinaryOctetStream is `binary` value of `Content-Type`.
 	HeaderValueContentTypeBinaryOctetStream = "binary/octet-stream"
+
+	emcCsrfTokenName = "EMC-CSRF-TOKEN"
 )
 
-// RestClient is a client to send REST request.
-type RestClient interface {
-	// Do sends a REST request.
-	Do(
-		ctx context.Context,
-		method, path string,
-		body, resp interface{},
-	) error
-
-	// DoWithHeaders sends a Rest request with headers.
-	DoWithHeaders(
-		ctx context.Context,
-		method, path string,
-		headers map[string]string,
-		body, resp interface{},
-	) error
-
-	//PingPong sends a Rest request and returns the raw response body.
-	PingPong(
-		ctx context.Context,
-		method, path string,
-		headers map[string]string,
-		body interface{},
-	) (*http.Response, error)
-
-	// Get sends a request using GET method.
-	Get(
-		ctx context.Context,
-		path string,
-		headers map[string]string,
-		resp interface{},
-	) error
-
-	// Post sends a request using POST method.
-	Post(
-		ctx context.Context,
-		path string,
-		headers map[string]string,
-		body, resp interface{},
-	) error
-
-	// Delete sends a request using DELETE method.
-	Delete(
-		ctx context.Context,
-		path string,
-		headers map[string]string,
-		body, resp interface{},
-	) error
-}
-
-type client struct {
+type restClient struct {
 	http      *http.Client
 	host      string
 	username  string
 	password  string
 	authToken string
 	csrfToken string
-	traceHTTP bool
+	traceHttp bool
 }
 
-// RestClientOptions are options for the REST client.
-type RestClientOptions struct {
-	// Insecure indicates whether or not to suppress SSL errors.
-	Insecure  bool
-	TraceHTTP bool
+type restClientOptions struct {
+	insecure  bool
+	traceHttp bool
+}
+
+// NewRestClientOptions returns a rest client option for creating rest client.
+func NewRestClientOptions(insecure, traceHttp bool) *restClientOptions {
+	return &restClientOptions{insecure: insecure, traceHttp: traceHttp}
 }
 
 // NewRestClient returns a new REST client to Unity.
-func NewRestClient(ctx context.Context, host, username, password string,
-	opts RestClientOptions) (RestClient, error) {
+func NewRestClient(
+	ctx context.Context, host, username, password string, opts *restClientOptions,
+) (*restClient, error) {
 
 	if host == "" {
-		return nil, newGounityError("missing host")
+		return nil, errors.New("missing host")
 	}
 
 	cookieJar, err := cookiejar.New(
-		&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+		&cookiejar.Options{PublicSuffixList: publicsuffix.List},
+	)
 	if err != nil {
 		return nil, err
 	}
-	c := &client{http: &http.Client{Jar: cookieJar}, host: host,
-		username: username, password: password, traceHTTP: opts.TraceHTTP}
 
-	if opts.Insecure {
-		c.http.Transport = &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
+	c := &restClient{
+		http: &http.Client{
+			Jar: cookieJar,
+			Transport: &http.Transport{
+				Dial: (&net.Dialer{
+					Timeout:   5 * time.Second,
+					KeepAlive: 10 * time.Second,
+				}).Dial,
+				TLSHandshakeTimeout: 10 * time.Second,
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: opts.insecure,
+				},
 			},
-		}
+		},
+		host: host, username: username, password: password,
+		traceHttp: opts.traceHttp,
 	}
+
 	return c, nil
 }
 
-func setDefaultContentType(header *http.Header, headers map[string]string,
-	defaultValue string) {
-	if v, ok := headers[HeaderKeyContentType]; ok {
-		defaultValue = v
-	}
-	header.Set(HeaderKeyContentType, defaultValue)
-}
+func (c *restClient) pingPong(
+	ctx context.Context,
+	method, path string,
+	headers map[string]string,
+	body io.Reader,
+) (*http.Response, error) {
 
-func (c *client) PingPong(ctx context.Context, method, path string,
-	headers map[string]string, body interface{}) (*http.Response, error) {
-
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"method":  method,
+			"path":    path,
+			"headers": headers,
+			"body":    body,
+		},
+	)
 	var err error
 
 	urlParts := []string{c.host}
@@ -141,73 +113,130 @@ func (c *client) PingPong(ctx context.Context, method, path string,
 
 	fullURL, err := url.Parse(strings.Join(urlParts, "/"))
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(
+			err, "parse url failed: %s", msg.withField("urlParts", urlParts),
+		)
 	}
 
-	var req *http.Request
-	if reader, ok := body.(io.ReadCloser); ok {
-		req, err = http.NewRequest(method, fullURL.String(), reader)
-		defer reader.Close()
+	req, err := http.NewRequest(method, fullURL.String(), body)
+	if err != nil {
+		return nil, errors.Wrapf(err, "new request failed: %s", msg)
+	}
 
-		setDefaultContentType(&req.Header, headers,
-			HeaderValueContentTypeBinaryOctetStream)
+	for header, value := range headers {
+		req.Header.Set(header, value)
+	}
+	req.SetBasicAuth(c.username, c.password)
+	req.Header.Set("X-EMC-REST-CLIENT", "true")
+	req.Header.Set(emcCsrfTokenName, c.csrfToken)
+
+	if c.traceHttp {
+		traceRequest(ctx, req)
+	}
+	req = req.WithContext(ctx)
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return nil, errors.Wrapf(err, "http request failed: %s", msg)
+	}
+	if c.traceHttp {
+		traceResponse(ctx, resp)
+	}
+	return resp, nil
+}
+
+func (c *restClient) do(
+	ctx context.Context,
+	method, path string,
+	headers map[string]string,
+	body interface{},
+) (*http.Response, error) {
+
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"method":  method,
+			"path":    path,
+			"headers": headers,
+			"body":    body,
+		},
+	)
+	var bodyCache bytes.Buffer
+	var reader io.Reader
+	var readerAgain io.Reader
+	contentType := ""
+	if r, ok := body.(io.ReadCloser); ok {
+		reader = io.TeeReader(r, &bodyCache)
+		defer r.Close()
+		readerAgain = &bodyCache
+		contentType = HeaderValueContentTypeBinaryOctetStream
+
 	} else if body != nil {
 		bodyBuffer := &bytes.Buffer{}
 		enc := json.NewEncoder(bodyBuffer)
-		if err = enc.Encode(body); err != nil {
-			return nil, err
+		if err := enc.Encode(body); err != nil {
+			return nil, errors.Wrapf(err, "encode request body failed: %s", msg)
 		}
-		req, err = http.NewRequest(method, fullURL.String(), bodyBuffer)
-		setDefaultContentType(&req.Header, headers,
-			HeaderValueContentTypeJSON)
-	} else {
-		req, err = http.NewRequest(method, fullURL.String(), nil)
+		reader = io.TeeReader(bodyBuffer, &bodyCache)
+		readerAgain = &bodyCache
+		contentType = HeaderValueContentTypeJSON
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
-	isContentTypeSet := req.Header.Get(HeaderKeyContentType) != ""
-
-	for header, value := range headers {
-		if header == HeaderKeyContentType && isContentTypeSet {
-			continue
+	if contentType != "" {
+		if headers == nil {
+			headers = map[string]string{}
 		}
-		req.Header.Add(header, value)
+		headers[HeaderKeyContentType] = contentType
 	}
-	req.SetBasicAuth(c.username, c.password)
-	req.Header.Add("X-EMC-REST-CLIENT", "true")
-	return c.doWithRetryOnce(ctx, req)
+
+	if resp, err := c.pingPong(
+		ctx, method, path, headers, reader,
+	); resp != nil && resp.StatusCode != http.StatusUnauthorized {
+
+		// Update csrf token only when getting unauthorized response
+		return resp, err
+	}
+
+	if err := c.updateCsrf(ctx); err != nil {
+		return nil, errors.Wrapf(err, "try to update csrf token failed: %s", msg)
+	}
+
+	return c.pingPong(ctx, method, path, headers, readerAgain)
 }
 
-func (c *client) doWithRetryOnce(ctx context.Context, req *http.Request) (*http.Response, error) {
-	var err error
-	for count := 0; count < 2; count++ {
-		req.Header.Set("EMC-CSRF-TOKEN", c.csrfToken)
+func (c *restClient) updateCsrf(ctx context.Context) error {
+	logrus.Debug("updating csrf token")
 
-		if c.traceHTTP {
-			traceRequest(ctx, req)
-		}
-		req = req.WithContext(ctx)
-		resp, err := c.http.Do(req)
-		if err != nil {
-			return nil, err
-		}
-		if c.traceHTTP {
-			traceResponse(ctx, resp)
-		}
-		c.csrfToken = resp.Header.Get("EMC-CSRF-TOKEN")
-		return resp, nil
+	resp, err := c.pingPong(ctx, http.MethodGet, "/api/types/system/instances", nil, nil)
+	if err != nil {
+		return errors.Wrapf(err, "update csrf token failed")
 	}
-	return nil, err
+
+	csrfToken := resp.Header.Get(emcCsrfTokenName)
+	if c.csrfToken != csrfToken {
+		c.csrfToken = csrfToken
+		logrus.Debug("csrf token updated")
+	}
+	return nil
 }
 
-func (c *client) DoWithHeaders(ctx context.Context, method, path string,
-	headers map[string]string, body, resp interface{}) error {
-	rawResp, err := c.PingPong(ctx, method, path, headers, body)
+// DoWithHeaders sends a REST request with headers.
+func (c *restClient) DoWithHeaders(
+	ctx context.Context, method, path string,
+	headers map[string]string, body, resp interface{},
+) error {
+
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"host":    c.host,
+			"method":  method,
+			"path":    path,
+			"headers": headers,
+			"body":    body,
+		},
+	)
+
+	rawResp, err := c.do(ctx, method, path, headers, body)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "http request with headers failed: %s", msg)
 	}
 	defer rawResp.Body.Close()
 
@@ -220,41 +249,45 @@ func (c *client) DoWithHeaders(ctx context.Context, method, path string,
 		}
 		dec := json.NewDecoder(rawResp.Body)
 		if err = dec.Decode(resp); err != nil && err != io.EOF {
-			log.WithError(err).Error(
-				fmt.Sprintf("unable to decode response into %+v", resp))
-			return err
+			return errors.Wrapf(err, "unable to decode response into %+v: %s", resp, msg)
 		}
 	default:
-		unityError, err := parseUnityError(rawResp.Body)
+		unityError, err := ParseUnityError(rawResp.Body)
 		if err != nil {
-			log.WithError(err).Error(
-				fmt.Sprintf("unable to decode response into unity error"))
-			return err
+			return errors.Wrapf(
+				err,
+				"unknown error: %s", msg.withField("status code", rawResp.StatusCode),
+			)
 		}
 		return unityError
 	}
 	return nil
 }
 
-func (c *client) Do(ctx context.Context, method, path string, body,
-	resp interface{}) error {
+// Do sends a REST request.
+func (c *restClient) Do(
+	ctx context.Context, method, path string, body, resp interface{},
+) error {
 	return c.DoWithHeaders(ctx, method, path, nil, body, resp)
 }
 
-func (c *client) Get(ctx context.Context, path string, headers map[string]string,
-	resp interface{}) error {
-
+// Get sends a REST request via GET method.
+func (c *restClient) Get(
+	ctx context.Context, path string, headers map[string]string, resp interface{},
+) error {
 	return c.DoWithHeaders(ctx, http.MethodGet, path, headers, nil, resp)
 }
 
-func (c *client) Post(ctx context.Context, path string, headers map[string]string,
-	body, resp interface{}) error {
-
+// Post sends a REST request via POST method.
+func (c *restClient) Post(
+	ctx context.Context, path string, headers map[string]string, body, resp interface{},
+) error {
 	return c.DoWithHeaders(ctx, http.MethodPost, path, headers, body, resp)
 }
 
-func (c *client) Delete(ctx context.Context, path string, headers map[string]string,
-	body, resp interface{}) error {
-
+// Delete sends a REST request via DELETE method.
+func (c *restClient) Delete(
+	ctx context.Context, path string, headers map[string]string, body, resp interface{},
+) error {
 	return c.DoWithHeaders(ctx, http.MethodDelete, path, headers, nil, resp)
 }

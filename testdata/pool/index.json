@@ -1,11 +1,15 @@
 {
     "indices": [
         {
-            "url": "/api/types/pool/instances?compact=true&fields=description,health,id,name,sizeFree,sizeTotal,sizeUsed",
+            "url": "/api/types/pool/instances?compact=true&fields=id,name,description,health,sizeFree,sizeTotal,sizeUsed",
             "response": "all.json"
         },
         {
-            "url": "/api/instances/pool/pool_1?compact=true&fields=description,health,id,name,sizeFree,sizeTotal,sizeUsed",
+            "url": "/api/instances/pool/pool_1?compact=true&fields=id,name,description,health,sizeFree,sizeTotal,sizeUsed",
+            "response": "pool_1.json"
+        },
+        {
+            "url": "/api/instances/pool/name:Manila_Pool?compact=true&fields=id,name,description,health,sizeFree,sizeTotal,sizeUsed",
             "response": "pool_1.json"
         }
     ]

@@ -1,43 +1,39 @@
 package gounity
 
 import (
-	"fmt"
-	"reflect"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
-var (
-	fieldsHostLUN = strings.Join([]string{
-		"hlu",
-		"host.id",
-		"id",
-		"isDefaultSnap",
-		"isReadOnly",
-		"lun.id",
-		"type",
-	}, ",")
-)
+type HostLUNOperator interface {
+	HostLUNOperatorGen
 
-// FilterHostLUN filters the `HostLUN` by given its host ID and LUN ID.
-func (u *Unity) FilterHostLUN(hostID, lunID string) (*HostLUN, error) {
-	filter := newFilter(fmt.Sprintf(`host eq "%s"`, hostID)).and(
-		fmt.Sprintf(`lun eq "%s"`, lunID))
-	collection, err := u.getCollection("hostLUN", fieldsHostLUN, filter,
-		reflect.TypeOf(HostLUN{}))
+	FilterHostLunByHostAndLun(hostId, lunId string) (*HostLUN, error)
+}
+
+// FilterHostLunByHostAndLun filters the `HostLun` by given its host Id and Lun Id.
+func (u *Unity) FilterHostLunByHostAndLun(hostId, lunId string) (*HostLUN, error) {
+
+	filter := NewFilterOn("host").Eq(hostId).And(NewFilterOn("lun").Eq(lunId))
+
+	fields := map[string]interface{}{
+		"hostId": hostId,
+		"lunId":  lunId,
+		"filter": filter,
+	}
+	msg := newMessage().withFields(fields)
+
+	hostLuns, err := u.FilterHostLUNs(filter)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "filter hostluns failed: %s", msg)
 	}
-	res := collection.([]*HostLUN)
-	if len(res) == 0 {
-		log.WithField("hostID", hostID).WithField("lunID",
-			lunID).Info("filter returns 0 hostLUN")
-		return nil, nil
+	if len(hostLuns) == 0 {
+		return nil, errors.Errorf("filter returned 0 hostlun: %s", msg)
 	}
-	if len(res) > 1 {
-		log.WithField("hostID", hostID).WithField("lunID", lunID).WithField("resultCount",
-			len(res)).Info("filter returns more one hostLUNs")
+	if len(hostLuns) > 1 {
+		return nil, errors.Errorf(
+			"filter returned more than one hostluns: %s",
+			msg.withField("numOfHostLun", len(hostLuns)),
+		)
 	}
-	return res[0], nil
+	return hostLuns[0], nil
 }

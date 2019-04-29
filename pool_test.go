@@ -1,64 +1,186 @@
-package gounity
+package gounity_test
 
 import (
 	"testing"
 
+	"github.com/Murray-LIANG/gounity"
+	"github.com/Murray-LIANG/gounity/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetPoolByID(t *testing.T) {
-	ctx, err := newTestContext()
+func TestGetPoolById(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	pool, err := ctx.unity.GetPoolByID("pool_1")
+	pool, err := ctx.Unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
-	assert.Equal(t, "pool_1", pool.ID)
+	assert.Equal(t, "pool_1", pool.Id)
 }
 
 func TestGetPools(t *testing.T) {
-	ctx, err := newTestContext()
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	pools, err := ctx.unity.GetPools()
+	pools, err := ctx.Unity.GetPools()
 	assert.Nil(t, err)
 
 	assert.Equal(t, 4, len(pools))
 	ids := []string{}
 	for _, pool := range pools {
-		ids = append(ids, pool.ID)
+		ids = append(ids, pool.Id)
 	}
 	assert.EqualValues(t, []string{"pool_1", "pool_2", "pool_7", "pool_9"}, ids)
 }
 
-func TestCreateLUN(t *testing.T) {
-	ctx, err := newTestContext()
+func TestNewPoolByIdThenRefresh(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	pool, err := ctx.unity.GetPoolByID("pool_1")
+	pool := ctx.Unity.NewPoolById("pool_1")
+	assert.Equal(t, "pool_1", pool.Id)
+	assert.Empty(t, pool.Name)
+
+	err = pool.Refresh()
 	assert.Nil(t, err)
-
-	lun, err := pool.CreateLUN("lun-gounity", 3)
-	assert.Nil(t, err)
-
-	assert.Equal(t, "sv_1", lun.ID)
+	assert.Equal(t, "pool_1", pool.Id)
+	assert.Equal(t, "Manila_Pool", pool.Name)
 }
 
-func TestCreateLUNNameExist(t *testing.T) {
-	ctx, err := newTestContext()
+func TestNewPoolByNameThenRefresh(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
-	defer ctx.tearDown()
+	defer ctx.TearDown()
 
-	pool, err := ctx.unity.GetPoolByID("pool_1")
+	pool := ctx.Unity.NewPoolByName("Manila_Pool")
+	assert.Empty(t, pool.Id)
+	assert.Equal(t, "Manila_Pool", pool.Name)
+
+	err = pool.Refresh()
+	assert.Nil(t, err)
+	assert.Equal(t, "pool_1", pool.Id)
+	assert.Equal(t, "Manila_Pool", pool.Name)
+}
+
+func TestCreateLun(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
 	assert.Nil(t, err)
 
-	_, err = pool.CreateLUN("lun-name-exist-gounity", 3)
+	lun, err := pool.CreateLun("lun-gounity", 3)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "sv_1", lun.Id)
+}
+
+func TestCreateLunWithOpt(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	host := ctx.Unity.NewHostById("Host_1")
+	lun, err := pool.CreateLun(
+		"lun-gounity", 3,
+		gounity.HostAccessOpt(host, gounity.HostLUNAccessProduction),
+	)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "sv_1", lun.Id)
+}
+
+func TestCreateLunNameExist(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	_, err = pool.CreateLun("lun-name-exist-gounity", 3)
 	assert.NotNil(t, err)
 
-	unityError, ok := err.(*UnityError)
-	assert.True(t, ok)
-	assert.Equal(t, UnityLunNameExistErrorCode, unityError.ErrorCode)
+	assert.True(t, gounity.IsUnityLunNameExistError(err))
+}
+
+func TestCreateFilesystem(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	nas, err := ctx.Unity.GetNasServerById("nas_1")
+	assert.Nil(t, err)
+
+	fs, err := pool.CreateFilesystem(nas, "fs-name", 3)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "fs_1", fs.Id)
+}
+
+func TestCreateFilesystemWithOpt(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	nas, err := ctx.Unity.GetNasServerById("nas_1")
+	assert.Nil(t, err)
+
+	fs, err := pool.CreateFilesystem(
+		nas, "fs-name", 3,
+		gounity.SupportedProtocolsOpt(gounity.FSSupportedProtocolNFS),
+	)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "fs_1", fs.Id)
+}
+
+func TestCreateNfsShare(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	nas, err := ctx.Unity.GetNasServerById("nas_1")
+	assert.Nil(t, err)
+
+	nfs, err := pool.CreateNfsShare(nas, "nfsshare-name", 3)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "NFSShare_1", nfs.Id)
+}
+
+func TestCreateNfsShareWithOpt(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	pool, err := ctx.Unity.GetPoolById("pool_1")
+	assert.Nil(t, err)
+
+	nas, err := ctx.Unity.GetNasServerById("nas_1")
+	assert.Nil(t, err)
+
+	nfs, err := pool.CreateNfsShare(
+		nas, "nfsshare-name", 3,
+		gounity.DefaultAccessOpt(gounity.NFSShareDefaultAccessReadWrite),
+	)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "NFSShare_1", nfs.Id)
 }

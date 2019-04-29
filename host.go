@@ -1,73 +1,105 @@
 package gounity
 
 import (
-	"context"
-	"reflect"
-	"strings"
+	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
-var (
-	fieldsHost = strings.Join([]string{
-		"description",
-		"health",
-		"id",
-		"name",
-		"osType",
-	}, ",")
-)
-
-// GetHostByID retrives the host by given its ID.
-func (u *Unity) GetHostByID(id string) (*Host, error) {
-	res := &Host{}
-	if err := u.getInstanceByID("host", id, fieldsHost, res); err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-// GetHosts retrives all the hosts.
-func (u *Unity) GetHosts() ([]*Host, error) {
-	collection, err := u.getCollection("host", fieldsHost, nil, reflect.TypeOf(Host{}))
-	if err != nil {
-		return nil, err
-	}
-	res := collection.([]*Host)
-	return res, nil
-}
-
-// Attach attaches the LUN to the host.
-func (h *Host) Attach(lun *LUN) (uint16, error) {
+// Attach attaches the Lun to the host.
+func (h *Host) Attach(lun *Lun) (uint16, error) {
 	hostAccess := []interface{}{
-		map[string]interface{}{"host": represent(h),
-			"accessMask": HostLUNAccessProduction},
+		map[string]interface{}{
+			"host":       h.Repr(),
+			"accessMask": HostLUNAccessProduction,
+		},
 	}
+
+	// Refresh lun from unity to get latest its hostAccess.
+	if err := lun.Refresh(); err != nil {
+		return 0, errors.Wrapf(err, "refresh lun failed")
+	}
+
 	for _, exist := range lun.HostAccess {
 		hostAccess = append(hostAccess,
 			map[string]interface{}{
-				"host": represent(exist.Host), "accessMask": exist.AccessMask})
+				"host":       exist.Host.Repr(),
+				"accessMask": exist.AccessMask,
+			},
+		)
 	}
 
 	body := map[string]interface{}{
 		"lunParameters": map[string]interface{}{"hostAccess": hostAccess},
 	}
 
-	logger := log.WithField("host", h).WithField("lun", lun).WithField(
-		"requestBody", body)
-	logger.Debug("attacthing lun to host")
-
-	if err := h.Unity.client.Post(context.Background(),
-		postInstanceURL("storageResource", lun.ID, "modifyLun"), nil, body,
-		nil); err != nil {
-
-		logger.WithError(err).Error("failed to attach lun to host")
-		return 0, err
+	fields := map[string]interface{}{
+		"host":        h,
+		"lun":         lun,
+		"requestBody": body,
 	}
 
-	hostLun, err := h.Unity.FilterHostLUN(h.ID, lun.ID)
+	log := logrus.WithFields(fields)
+	msg := newMessage().withFields(fields)
+
+	log.Debug("attaching lun to host")
+	if err := h.Unity.PostOnInstance(
+		typeStorageResource, lun.Id, actionModifyLun, body,
+	); err != nil {
+		return 0, errors.Wrapf(err, "attach lun to host failed: %s", msg)
+	}
+
+	hostLun, err := h.Unity.FilterHostLunByHostAndLun(h.Id, lun.Id)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrapf(err, "filter hostlun by host and lun failed: %s", msg)
 	}
 	return hostLun.Hlu, nil
+}
+
+// Detach detaches the Lun from the host.
+func (h *Host) Detach(lun *Lun) error {
+
+	// Refresh lun from unity to get latest its hostAccess.
+	if err := lun.Refresh(); err != nil {
+		return errors.Wrapf(err, "refresh lun failed")
+	}
+	hostAccess := []interface{}{}
+
+	if h.Id == "" {
+		if err := h.Refresh(); err != nil {
+			return errors.Wrapf(err, "refresh host failed")
+		}
+	}
+	for _, exist := range lun.HostAccess {
+		if exist.Host.Id == h.Id {
+			continue
+		}
+		hostAccess = append(hostAccess,
+			map[string]interface{}{
+				"host":       exist.Host.Repr(),
+				"accessMask": exist.AccessMask,
+			},
+		)
+	}
+
+	body := map[string]interface{}{
+		"lunParameters": map[string]interface{}{"hostAccess": hostAccess},
+	}
+
+	fields := map[string]interface{}{
+		"host":        h,
+		"lun":         lun,
+		"requestBody": body,
+	}
+
+	log := logrus.WithFields(fields)
+	msg := newMessage().withFields(fields)
+
+	log.Debug("detaching lun from host")
+	if err := h.Unity.PostOnInstance(
+		typeStorageResource, lun.Id, actionModifyLun, body,
+	); err != nil {
+		return errors.Wrapf(err, "detach lun from host failed: %s", msg)
+	}
+	return nil
 }

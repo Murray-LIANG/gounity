@@ -1,0 +1,28 @@
+{
+    "@base": "https://10.245.101.39/api/types/nasServer/instances?fields=id,name,health&per_page=2000&compact=true",
+    "updated": "2018-12-29T08:00:17.111Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "nas_1",
+                "name": "nas-server",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_COMPONENT_OK"
+                    ],
+                    "descriptions": [
+                        "The component is operating normally. No action is required."
+                    ]
+                }
+            }
+        }
+    ]
+}
+

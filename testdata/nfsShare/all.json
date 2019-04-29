@@ -1,0 +1,29 @@
+{
+    "@base": "https://10.245.101.39/api/types/nfsShare/instances?fields=id,name,description,exportPaths&per_page=2000&compact=true",
+    "updated": "2018-12-30T08:26:47.108Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "NFSShare_1",
+                "name": "nfs_1",
+                "exportPaths": [
+                    "10.245.47.97:/nfs_1"
+                ],
+                "description": "",
+                "filesystem": {
+                    "id": "fs_1",
+                    "storageResource": {
+                        "id": "res_1"
+                    }
+                }
+            }
+        }
+    ]
+}
+

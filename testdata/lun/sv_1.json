@@ -24,6 +24,9 @@
         "snapCount": 1,
         "pool": {
             "id": "pool_1"
+        },
+        "storageResource": {
+            "id": "sv_1"
         }
     }
 }

@@ -1,5 +1,5 @@
 {
-    "@base": "https://10.245.101.39/api/types/lun/instances?fields=description,health,hostAccess,id,isThinEnabled,metadataSize,metadataSizeAllocated,name,pool.id,sizeAllocated,sizeTotal,sizeUsed,snapCount,snapWwn,snapsSize,snapsSizeAllocated,wwn&per_page=2000&compact=true",
+    "@base": "https://10.245.101.39/api/types/lun/instances?fields=description,health,hostAccess,id,isThinEnabled,metadataSize,metadataSizeAllocated,name,pool,sizeAllocated,sizeTotal,sizeUsed,snapCount,snapWwn,snapsSize,snapsSizeAllocated,wwn&per_page=2000&compact=true",
     "updated": "2018-06-19T06:09:03.354Z",
     "links": [
         {

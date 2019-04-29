@@ -1,0 +1,33 @@
+---
+# each line with format [<value>, <enumeration>, <description>]
+
+BlockHostAccessEnum:
+  0: [Off, Access is disabled.]
+  1: [On, Access is enabled.]
+  2: [Mixed, (Applies to Consistency Groups only.) Indicates that LUNs in a consistency group have different host access.]
+
+HostLUNAccessEnum:
+  0: [NoAccess, No access.]
+  1: [Production, Access to production LUNs only.]
+  2: [Snapshot, Access to LUN snapshots only.]
+  3: [Both, Access to both production LUNs and their snapshots.]
+  4: [ProductionOn, Request to grant production access to LUNs for host. Should be used only by GUI.]
+  5: [ProductionOff, Request to deny production access to LUNs for host. Should be used only by GUI.]
+  65535: [Mixed, (Applies to consistency groups only.) Indicates that LUNs in a consistency group have different host access. Do not use this value in Create or Modify requests.]
+
+HostLunTypeEnum:
+  0: [Unknown, Unknown LUN type.]
+  1: [LUN, Production LUN.]
+  2: [LUN_Snap, Snapshot LUN.]
+
+NFSShareDefaultAccessEnum:
+  0: [NoAccess, Deny access to the share for the hosts.]
+  1: [ReadOnly, Allow read only access to the share for the hosts.]
+  2: [ReadWrite, Allow read write access to the share for the hosts.]
+  3: [Root, Allow read write root access to the share for the hosts.]
+  4: [RoRoot, Allow read only root access to the share for the hosts.]
+
+FSSupportedProtocolEnum:
+  0: [NFS, Only NFS share protocol supported by file system.]
+  1: [CIFS, Only SMB (also known as CIFS) share protocol is supported by file system.]
+  2: [Multiprotocol, Both share protocols NFS and SMB (also known as CIFS) are supported by file system.]

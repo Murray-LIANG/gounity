@@ -1,0 +1,19 @@
+{
+    "content": {
+        "id": "fs_1",
+        "health": {
+            "value": 5,
+            "descriptionIds": [
+                "ALRT_APP_FS_OK"
+            ],
+            "descriptions": [
+                "This storage resource is operating normally. No action is required."
+            ]
+        },
+        "name": "fs_1",
+        "description": "",
+        "storageResource": {
+            "id": "res_1"
+        }
+    }
+}

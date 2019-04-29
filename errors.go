@@ -3,55 +3,59 @@ package gounity
 import (
 	"fmt"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
-const (
-	// UnityResourceNotFoundErrorCode is error code for resource not found.
-	UnityResourceNotFoundErrorCode = 131149829
-	// UnityLunNameExistErrorCode is error code for LUN name existing.
-	UnityLunNameExistErrorCode = 108007744
-)
-
-type gounityError struct {
-	message    string
-	fields     map[string]interface{}
-	innerError error
+// IsUnityError returns true if err is an unity error.
+func IsUnityError(err error) bool {
+	_, ok := errors.Cause(err).(*unityError)
+	return ok
 }
 
-func (e *gounityError) Error() string {
-	if e.fields == nil {
-		e.fields = map[string]interface{}{}
+// GetUnityErrorStatusCode returns the unity error code.
+func GetUnityErrorStatusCode(err error) int {
+	if e, ok := errors.Cause(err).(*unityError); ok {
+		return e.HttpStatusCode
 	}
-	if e.innerError != nil {
-		e.fields["innerError"] = e.innerError
-	}
-	kvStrs := []string{}
-	for k, v := range e.fields {
-		kvStrs = append(kvStrs, fmt.Sprintf("%s=%v", k, v))
-	}
-	return fmt.Sprintf("%s %s", e.message, strings.Join(kvStrs, ","))
+	return -1
 }
 
-func (e *gounityError) withError(err error) *gounityError {
-	e.innerError = err
-	return e
+type message struct {
+	message string
+	fields  map[string]interface{}
 }
 
-func (e *gounityError) withField(key string, value interface{}) *gounityError {
-	if e.fields == nil {
-		e.fields = map[string]interface{}{}
+func (m *message) String() string {
+	if m.fields == nil {
+		m.fields = map[string]interface{}{}
 	}
-	e.fields[key] = value
-	return e
+	strs := []string{}
+	if m.message != "" {
+		strs = append(strs, m.message)
+	}
+	for k, v := range m.fields {
+		strs = append(strs, fmt.Sprintf("%s=%+v", k, v))
+	}
+	return strings.Join(strs, ",")
 }
 
-func (e *gounityError) withFields(fields map[string]interface{}) *gounityError {
+func (m *message) withField(key string, value interface{}) *message {
+	return m.withFields(map[string]interface{}{key: value})
+}
+
+func (m *message) withFields(fields map[string]interface{}) *message {
+	res := newMessage()
+	res.fields = map[string]interface{}{}
+	for k, v := range m.fields {
+		res.fields[k] = v
+	}
 	for k, v := range fields {
-		e = e.withField(k, v)
+		res.fields[k] = v
 	}
-	return e
+	return res
 }
 
-func newGounityError(message string) *gounityError {
-	return &gounityError{message: message}
+func newMessage() *message {
+	return &message{}
 }

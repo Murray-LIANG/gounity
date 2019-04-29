@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/types/filesystem/instances?compact=true&fields=id,name,health,description,storageResource",
+            "response": "all.json"
+        },
+        {
+            "url": "/api/instances/filesystem/fs_1?compact=true&fields=id,name,health,description,storageResource",
+            "response": "fs_1.json"
+        }
+    ]
+}
