@@ -12,7 +12,7 @@ GoUnity is a Go project that provides a client for managing Dell EMC Unity stora
 
 ## Current State
 
-**Under developing. Please contribute and follow the [guideline](#contribute-guideline).**
+**Under development. Please contribute and follow the [guideline](#contribute-guideline).**
 
 
 ## License

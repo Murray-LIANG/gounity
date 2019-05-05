@@ -75,6 +75,8 @@ type UnityConnector interface {
 
 	LunOperatorGen
 
+	SnapOperatorGen
+
 	HostOperatorGen
 
 	HostLUNOperator

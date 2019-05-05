@@ -1,0 +1,38 @@
+{
+  "indices": [
+    {
+      "url": "/api/types/snap/instances?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess&filter=lun.id eq \"sv_1\"",
+      "response": "sv_1_snaps.json"
+    },
+    {
+      "url": "/api/instances/snap/38654714770?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess",
+      "response": "snap_1.json"
+    },
+    {
+      "url": "/api/instances/snap/name:new_snap?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess",
+      "response": "snap_2.json"
+    },
+    {
+      "url": "/api/instances/snap/38654714770/action/copy",
+      "body": {
+        "copyName": "new_snap"
+      },
+      "response": "snap_1_copy.json"
+    },
+    {
+      "url": "/api/instances/snap/38654714770/action/attach",
+      "body": {
+        "hostAccess": [{
+          "host": {"id": "Host_1"},
+          "allowedAccess": 1
+        }]
+      },
+      "response": "snap_1_attach.json"
+    },
+    {
+      "url": "/api/instances/snap/38654714770/action/detach",
+      "body": {},
+      "response": "snap_1_attach.json"
+    }
+  ]
+}
