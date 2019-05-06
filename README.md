@@ -25,6 +25,7 @@ GoUnity is a Go project that provides a client for managing Dell EMC Unity stora
 - Query instances of:
   - Storage Pool
   - LUN
+  - Snapshot
   - Host
   - Filesystem
   - Nas Server
@@ -32,7 +33,8 @@ GoUnity is a Go project that provides a client for managing Dell EMC Unity stora
 - Create/Delete LUNs
 - Create/Delete Filesystems
 - Create/Delete NFS Shares
-- Attach LUNs to Hosts
+- Attach/Detach Hosts to LUNs
+- Create/Attach/Detach/Copy Snapshots
 
 
 ## Installation
