@@ -4,6 +4,50 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
+type createSnapshotResourceResp struct {
+	Content struct {
+		Id string `json:"id"`
+	} `json:"content"`
+}
+
+func newCreateSnapshotBody(s *Snap, sr *StorageResource) map[string]interface{} {
+	body := map[string]interface{}{
+		"name": s.Name,
+		"storageResource": *sr.Repr(),
+	}
+
+	return body
+}
+
+func (s *Snap) Create(sr *StorageResource) (error) {
+	body := newCreateSnapshotBody(s, sr)
+
+	fields := map[string]interface{}{
+		"requestBody": body,
+	}
+	log := logrus.WithFields(fields)
+	msg := newMessage().withFields(fields)
+
+	log.Debug("creating snapshot")
+	resp := &createSnapshotResourceResp{}
+	if err := s.Unity.CreateOnType(typeNameSnap, body, resp); err != nil {
+		return errors.Wrapf(err, "create snapshot failed: %s", err)
+	}
+
+	createdId := resp.Content.Id
+
+	log.WithField("createdSnapshotId", createdId).Debug("snapshot created")
+
+	snap, err := s.Unity.GetSnapById(createdId)
+	if err != nil {
+		return errors.Wrapf(
+			err,
+			"could not retrieve snapshot: %s", msg.withField("createdSnapshotId", createdId),
+		)
+	}
+	*s = *snap
+	return err
+}
 
 func (s *Snap) Copy(copyName string) (*Snap, error) {
 	body := map[string]interface{}{

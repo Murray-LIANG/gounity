@@ -13,6 +13,20 @@
       "response": "snap_2.json"
     },
     {
+      "url": "/api/instances/snap/38654714905?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess",
+      "response": "snap_2.json"
+    },
+    {
+      "url": "/api/types/snap/instances",
+      "body": {
+        "name": "new_snap",
+        "storageResource": {
+          "id": "sv_1"
+        }
+      },
+      "response": "snap_3_create.json"
+    },
+    {
       "url": "/api/instances/snap/38654714770/action/copy",
       "body": {
         "copyName": "new_snap"

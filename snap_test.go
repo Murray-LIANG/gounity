@@ -8,7 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetSnapsForLun(t *testing.T) {
+func TestStorageResource_CreateSnapshot(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	sr, err := ctx.Unity.GetStorageResourceById("sv_1")
+	assert.Nil(t, err)
+	snap := ctx.Unity.NewSnapByName("new_snap")
+	assert.Nil(t, err)
+	assert.NotNil(t, snap)
+	err = snap.Create(sr)
+	assert.Nil(t, err)
+	assert.Equal(t, "38654714905", snap.Id)
+	assert.Equal(t, "new_snap", snap.Name)
+}
+
+
+func TestSnap_GetFilter(t *testing.T) {
 	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")
 	defer ctx.TearDown()

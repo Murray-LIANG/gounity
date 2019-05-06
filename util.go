@@ -96,6 +96,13 @@ func postTypeUrl(typeName, action string) string {
 	return strings.Join([]string{pathAPITypes, typeName, "action", action}, "/")
 }
 
+func createTypeUrl(typeName string) string {
+	return strings.Join(
+		[]string{pathAPITypes, typeName, "instances"},
+		"/",
+	)
+}
+
 func postInstanceUrl(typeName, resId, action string) string {
 	return strings.Join(
 		[]string{pathAPIInstances, typeName, resId, "action", action},
