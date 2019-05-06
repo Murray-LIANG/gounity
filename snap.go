@@ -34,18 +34,17 @@ func (s *Snap) Create(sr *StorageResource) (error) {
 		return errors.Wrapf(err, "create snapshot failed: %s", err)
 	}
 
-	createdId := resp.Content.Id
+	log.WithField("createdSnapshotId", s.Id).Debug("snapshot created")
+	s.Id = resp.Content.Id
 
-	log.WithField("createdSnapshotId", createdId).Debug("snapshot created")
-
-	snap, err := s.Unity.GetSnapById(createdId)
+	err := s.Refresh()
 	if err != nil {
 		return errors.Wrapf(
 			err,
-			"could not retrieve snapshot: %s", msg.withField("createdSnapshotId", createdId),
+			"could not retrieve snapshot: %s", msg.withField("createdSnapshotId", s.Id),
 		)
 	}
-	*s = *snap
+
 	return err
 }
 
