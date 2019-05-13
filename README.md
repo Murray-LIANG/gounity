@@ -1,7 +1,7 @@
 # GoUnity
 
 [![GitHub release](https://img.shields.io/github/release/Murray-LIANG/gounity.svg)](https://github.com/Murray-LIANG/gounity/releases)
-[![Travis branch](https://img.shields.io/travis/Murray-LIANG/gounity/master.svg)](https://travis-ci.org/Murray-LIANG/gounity/branches)
+[![Travis branch](https://travis-ci.com/Murray-LIANG/gounity.svg?branch=master)](https://travis-ci.org/Murray-LIANG/gounity/branches)
 [![Coveralls github branch](https://img.shields.io/coveralls/github/Murray-LIANG/gounity/master.svg)](https://coveralls.io/github/Murray-LIANG/gounity)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Murray-LIANG/gounity)](https://goreportcard.com/report/github.com/Murray-LIANG/gounity)
 [![license](https://img.shields.io/github/license/Murray-LIANG/gounity.svg)](https://github.com/Murray-LIANG/gounity/blob/develop/LICENSE)
