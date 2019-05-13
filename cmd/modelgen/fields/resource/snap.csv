@@ -1,0 +1,15 @@
+id,string
+name,string
+description,string
+storageResource,*StorageResource
+lun,*Lun
+creationTime,string
+expirationTime,string
+creatorType,SnapCreatorTypeEnum
+isSystemSnap,bool
+isModifiable,bool
+isReadOnly,bool
+isModified,bool
+state,SnapStateEnum
+size,uint64
+hostAccess,[]*SnapHostAccess

@@ -1,0 +1,22 @@
+{
+  "content": {
+    "id": "38654714770",
+    "creatorType": 1,
+    "state": 2,
+    "name": "UTC_2019-05-03_16:00:00",
+    "description": "",
+    "creationTime": "2019-05-03T16:00:01.882Z",
+    "expirationTime": "2019-05-03T21:00:01.000Z",
+    "isSystemSnap": false,
+    "isModifiable": false,
+    "isReadOnly": true,
+    "isModified": false,
+    "size": 107374182400,
+    "storageResource": {
+      "id": "sv_1"
+    },
+    "lun": {
+      "id": "sv_1"
+    }
+  }
+}
