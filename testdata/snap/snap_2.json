@@ -1,0 +1,22 @@
+{
+  "content": {
+    "id": "38654714905",
+    "creatorType": 1,
+    "state": 2,
+    "name": "new_snap",
+    "description": "",
+    "creationTime": "2019-05-03T19:00:02.155Z",
+    "expirationTime": "2019-05-04T00:00:01.000Z",
+    "isSystemSnap": false,
+    "isModifiable": false,
+    "isReadOnly": true,
+    "isModified": false,
+    "size": 107374182400,
+    "storageResource": {
+      "id": "sv_4"
+    },
+    "lun": {
+      "id": "sv_4"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "@base": "https://10.171.87.52/api/instances/snap",
+  "updated": "2019-05-06T17:32:17.359Z",
+  "links": [
+    {
+      "rel": "self",
+      "href": "/38654714905"
+    }
+  ],
+  "content": {
+    "id": "38654714905"
+  }
+}

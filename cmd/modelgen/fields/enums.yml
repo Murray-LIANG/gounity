@@ -31,3 +31,31 @@ FSSupportedProtocolEnum:
   0: [NFS, Only NFS share protocol supported by file system.]
   1: [CIFS, Only SMB (also known as CIFS) share protocol is supported by file system.]
   2: [Multiprotocol, Both share protocols NFS and SMB (also known as CIFS) are supported by file system.]
+
+SnapCreatorTypeEnum:
+  0: [None, Not specified.]
+  1: [Scheduled, Created by a snapshot schedule.]
+  2: [User_Custom, Created by a user with a custom name.]
+  3: [User_Default, Created by a user with a default name.]
+  4: [External_VSS, Created by Windows Volume Shadow Copy Service (VSS) to obtain an application consistent snapshot.]
+  5: [External_NDMP, Created by an NDMP backup operation.]
+  6: [External_Restore, Created as a backup snapshot before a snapshot restore.]
+  8: [External_Replication_Manager, Created by Replication Manager.]
+  9: [Replication, Created by a native replication operation.]
+  11: [Snap_CLI, Created inband by SnapCLI.]
+  12: [AppSync, Created by AppSync.]
+
+SnapStateEnum:
+  2: [Ready, The snaphot is operating normally.]
+  3: [Faulted, The storage pool that the snapshot belongs to is degraded.]
+  6: [Offline, The snapshot is not accessible possibly because the storage resource is not ready or the storage pool is full.]
+  7: [Invalid, The snapshot has become invalid becauuse of a non recoverable error.]
+  8: [Initializing, The snapshot is being created.]
+  9: [Destroying, The snapshot is being deleted.]
+
+SnapAccessLevelEnum:
+  0: [ReadOnly, Allow read-only access to the snapshot for a host.]
+  1: [ReadWrite, Allow read/write access to the snapshot for a host.]
+  2: [ReadOnlyPartial, (Applies to consistency group snapshots only.) Indicates that host has read-only access to some individual snapshots in a consistency group snapshot. Do not use this value in Modify requests.]
+  3: [ReadWritePartial, (Applies to consistency group snapshots only.) Indicates that host has read/write access to some individual snapshots in a consistency group snapshot. Do not use this value in Modify requests.]
+  4: [Mixed, (Applies to consistency group snapshots only.) Indicates that host has read-only and read/write access to some individual snapshots in a consistency group snapshot. Do not use this value in Modify requests.]
