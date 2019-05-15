@@ -59,3 +59,7 @@ SnapAccessLevelEnum:
   2: [ReadOnlyPartial, (Applies to consistency group snapshots only.) Indicates that host has read-only access to some individual snapshots in a consistency group snapshot. Do not use this value in Modify requests.]
   3: [ReadWritePartial, (Applies to consistency group snapshots only.) Indicates that host has read/write access to some individual snapshots in a consistency group snapshot. Do not use this value in Modify requests.]
   4: [Mixed, (Applies to consistency group snapshots only.) Indicates that host has read-only and read/write access to some individual snapshots in a consistency group snapshot. Do not use this value in Modify requests.]
+
+IpProtocolVersionEnum:
+  4: [IPv4, Network interface uses IPv4 address.]
+  6: [IPv6, Network interface uses IPv6 address.]

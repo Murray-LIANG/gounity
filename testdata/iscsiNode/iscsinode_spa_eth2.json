@@ -1,0 +1,10 @@
+{
+    "content": {
+        "id": "iscsinode_spa_eth2",
+        "name": "iqn.1992-04.com.emc:cx.fnm00150600267.a0",
+        "alias": "0267.a0",
+        "ethernetPort": {
+            "id": "spa_eth2"
+        }
+    }
+}

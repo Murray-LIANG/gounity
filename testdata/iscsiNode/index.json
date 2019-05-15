@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/instances/iscsiNode/iscsinode_spa_eth2?compact=true&fields=alias,ethernetPort,id,name",
+            "response": "iscsinode_spa_eth2.json"
+        },
+        {
+            "url": "/api/types/iscsiNode/instances?compact=true&fields=alias,ethernetPort,id,name",
+            "response": "all.json"
+        }
+    ]
+}

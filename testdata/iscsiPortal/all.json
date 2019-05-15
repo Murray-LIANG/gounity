@@ -1,0 +1,44 @@
+{
+    "@base": "https://10.245.101.39/api/types/iscsiPortal/instances?fields=ethernetPort,gateway,id,ipAddress,ipProtocolVersion,iscsiNode,netmask,v6PrefixLength,vlanId,iscsiNode.name&per_page=2000&compact=true",
+    "updated": "2019-05-15T06:32:21.733Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "if_3",
+                "ipProtocolVersion": 4,
+                "ipAddress": "10.245.47.95",
+                "netmask": "255.255.255.0",
+                "gateway": "10.245.47.1",
+                "ethernetPort": {
+                    "id": "spa_eth2"
+                },
+                "iscsiNode": {
+                    "id": "iscsinode_spa_eth2",
+                    "name": "iqn.1992-04.com.emc:cx.fnm00150600267.a0"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "if_4",
+                "ipProtocolVersion": 4,
+                "ipAddress": "10.245.47.96",
+                "netmask": "255.255.255.0",
+                "gateway": "10.245.47.1",
+                "ethernetPort": {
+                    "id": "spb_eth2"
+                },
+                "iscsiNode": {
+                    "id": "iscsinode_spb_eth2",
+                    "name": "iqn.1992-04.com.emc:cx.fnm00150600267.b0"
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/instances/ethernetPort/spa_eth2?compact=true&fields=health,id,isLinkUp,name",
+            "response": "spa_eth2.json"
+        },
+        {
+            "url": "/api/types/ethernetPort/instances?compact=true&fields=health,id,isLinkUp,name",
+            "response": "all.json"
+        }
+    ]
+}

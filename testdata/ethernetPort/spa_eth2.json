@@ -1,0 +1,16 @@
+{
+    "content": {
+        "id": "spa_eth2",
+        "health": {
+            "value": 5,
+            "descriptionIds": [
+                "ALRT_PORT_LINK_UP"
+            ],
+            "descriptions": [
+                "The port is operating normally."
+            ]
+        },
+        "name": "SP A Ethernet Port 2",
+        "isLinkUp": true
+    }
+}
