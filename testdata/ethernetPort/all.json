@@ -1,0 +1,140 @@
+{
+    "@base": "https://10.245.101.39/api/types/ethernetPort/instances?fields=health,id,isLinkUp,name&per_page=2000&compact=true",
+    "updated": "2019-05-15T05:20:04.683Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "spa_eth2",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_UP"
+                    ],
+                    "descriptions": [
+                        "The port is operating normally."
+                    ]
+                },
+                "name": "SP A Ethernet Port 2",
+                "isLinkUp": true
+            }
+        },
+        {
+            "content": {
+                "id": "spa_eth3",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_DOWN_NOT_IN_USE"
+                    ],
+                    "descriptions": [
+                        "The port link is down, but not in use. No action is required."
+                    ]
+                },
+                "name": "SP A Ethernet Port 3",
+                "isLinkUp": false
+            }
+        },
+        {
+            "content": {
+                "id": "spa_mgmt",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_UP"
+                    ],
+                    "descriptions": [
+                        "The port is operating normally."
+                    ]
+                },
+                "name": "SP A Management Port",
+                "isLinkUp": true
+            }
+        },
+        {
+            "content": {
+                "id": "spa_srm",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_UP"
+                    ],
+                    "descriptions": [
+                        "The port is operating normally."
+                    ]
+                },
+                "name": "SP A Sync Replication Management Port",
+                "isLinkUp": true
+            }
+        },
+        {
+            "content": {
+                "id": "spb_eth2",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_UP"
+                    ],
+                    "descriptions": [
+                        "The port is operating normally."
+                    ]
+                },
+                "name": "SP B Ethernet Port 2",
+                "isLinkUp": true
+            }
+        },
+        {
+            "content": {
+                "id": "spb_eth3",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_DOWN_NOT_IN_USE"
+                    ],
+                    "descriptions": [
+                        "The port link is down, but not in use. No action is required."
+                    ]
+                },
+                "name": "SP B Ethernet Port 3",
+                "isLinkUp": false
+            }
+        },
+        {
+            "content": {
+                "id": "spb_mgmt",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_UP"
+                    ],
+                    "descriptions": [
+                        "The port is operating normally."
+                    ]
+                },
+                "name": "SP B Management Port",
+                "isLinkUp": true
+            }
+        },
+        {
+            "content": {
+                "id": "spb_srm",
+                "health": {
+                    "value": 5,
+                    "descriptionIds": [
+                        "ALRT_PORT_LINK_UP"
+                    ],
+                    "descriptions": [
+                        "The port is operating normally."
+                    ]
+                },
+                "name": "SP B Sync Replication Management Port",
+                "isLinkUp": true
+            }
+        }
+    ]
+}

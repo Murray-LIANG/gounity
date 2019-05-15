@@ -90,6 +90,12 @@ type UnityConnector interface {
 	FilesystemOperatorGen
 
 	NfsShareOperatorGen
+
+	EthernetPortOperatorGen
+
+	IscsiNodeOperatorGen
+
+	IscsiPortalOperatorGen
 }
 
 // Unity defines the connection to Unity system.
@@ -265,11 +271,10 @@ func (u *Unity) PostOnType(
 	return resp.Content.StorageResource.Id, nil
 }
 
-
 // CreateOnType sends POST request to create resource type.
 func (u *Unity) CreateOnType(
 	typeName string, body map[string]interface{}, resp interface{},
-) (error) {
+) error {
 
 	msg := newMessage().withFields(
 		map[string]interface{}{

@@ -1,0 +1,4 @@
+alias,string
+ethernetPort,EthernetPort
+id,string
+name,string

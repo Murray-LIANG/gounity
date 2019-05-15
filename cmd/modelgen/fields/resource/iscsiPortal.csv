@@ -1,0 +1,10 @@
+ethernetPort,*EthernetPort
+gateway,string
+id,string
+ipAddress,string
+ipProtocolVersion,IpProtocolVersionEnum
+iscsiNode,*IscsiNode
+netmask,string
+v6PrefixLength,uint32
+vlanId,uint16
+iscsiNode.name

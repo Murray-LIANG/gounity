@@ -1,0 +1,12 @@
+{
+    "indices": [
+        {
+            "url": "/api/instances/iscsiPortal/if_3?compact=true&fields=ethernetPort,gateway,id,ipAddress,ipProtocolVersion,iscsiNode,netmask,v6PrefixLength,vlanId,iscsiNode.name",
+            "response": "if_3.json"
+        },
+        {
+            "url": "/api/types/iscsiPortal/instances?compact=true&fields=ethernetPort,gateway,id,ipAddress,ipProtocolVersion,iscsiNode,netmask,v6PrefixLength,vlanId,iscsiNode.name",
+            "response": "all.json"
+        }
+    ]
+}
