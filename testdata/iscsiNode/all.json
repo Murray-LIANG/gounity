@@ -1,0 +1,52 @@
+{
+    "@base": "https://10.245.101.39/api/types/iscsiNode/instances?fields=alias,ethernetPort,id,name&per_page=2000&compact=true",
+    "updated": "2019-05-15T05:54:02.754Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "&page=1"
+        }
+    ],
+    "entries": [
+        {
+            "content": {
+                "id": "iscsinode_spa_eth2",
+                "name": "iqn.1992-04.com.emc:cx.fnm00150600267.a0",
+                "alias": "0267.a0",
+                "ethernetPort": {
+                    "id": "spa_eth2"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "iscsinode_spa_eth3",
+                "name": "iqn.1992-04.com.emc:cx.fnm00150600267.a1",
+                "alias": "0267.a1",
+                "ethernetPort": {
+                    "id": "spa_eth3"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "iscsinode_spb_eth2",
+                "name": "iqn.1992-04.com.emc:cx.fnm00150600267.b0",
+                "alias": "0267.b0",
+                "ethernetPort": {
+                    "id": "spb_eth2"
+                }
+            }
+        },
+        {
+            "content": {
+                "id": "iscsinode_spb_eth3",
+                "name": "iqn.1992-04.com.emc:cx.fnm00150600267.b1",
+                "alias": "0267.b1",
+                "ethernetPort": {
+                    "id": "spb_eth3"
+                }
+            }
+        }
+    ]
+}

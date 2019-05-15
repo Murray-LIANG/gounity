@@ -1,0 +1,4 @@
+health,*Health
+id,string
+isLinkUp,bool
+name,string

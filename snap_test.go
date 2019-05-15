@@ -24,7 +24,6 @@ func TestStorageResource_CreateSnapshot(t *testing.T) {
 	assert.Equal(t, "new_snap", snap.Name)
 }
 
-
 func TestSnap_GetFilter(t *testing.T) {
 	ctx, err := testutil.NewTestContext()
 	assert.Nil(t, err, "failed to setup rest client to mock server")

@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
+
 type createSnapshotResourceResp struct {
 	Content struct {
 		Id string `json:"id"`
@@ -12,14 +13,14 @@ type createSnapshotResourceResp struct {
 
 func newCreateSnapshotBody(s *Snap, sr *StorageResource) map[string]interface{} {
 	body := map[string]interface{}{
-		"name": s.Name,
+		"name":            s.Name,
 		"storageResource": *sr.Repr(),
 	}
 
 	return body
 }
 
-func (s *Snap) Create(sr *StorageResource) (error) {
+func (s *Snap) Create(sr *StorageResource) error {
 	body := newCreateSnapshotBody(s, sr)
 
 	fields := map[string]interface{}{
@@ -77,10 +78,10 @@ func (s *Snap) Copy(copyName string) (*Snap, error) {
 	return snap, err
 }
 
-func (s *Snap) AttachToHost(host *Host, access SnapAccessLevelEnum) (error) {
+func (s *Snap) AttachToHost(host *Host, access SnapAccessLevelEnum) error {
 	hostAccess := []interface{}{
 		map[string]interface{}{
-			"host":       *host.Repr(),
+			"host":          *host.Repr(),
 			"allowedAccess": access,
 		},
 	}
@@ -106,7 +107,7 @@ func (s *Snap) AttachToHost(host *Host, access SnapAccessLevelEnum) (error) {
 	return err
 }
 
-func (s *Snap) DetachFromHost() (error) {
+func (s *Snap) DetachFromHost() error {
 	body := map[string]interface{}{}
 
 	logrus.Debug("detaching snapshot")
