@@ -4,7 +4,6 @@ package gounity_test
 
 import (
 	"flag"
-	"github.com/sirupsen/logrus"
 	"strings"
 	"testing"
 
@@ -128,4 +127,17 @@ func TestE2EDeleteFilesystem(t *testing.T) {
 
 	_, err = u.GetFilesystemByName("nfs-gounity")
 	assert.True(t, gounity.IsUnityResourceNotFoundError(err))
+}
+
+func TestE2EGetIscsiPortals(t *testing.T) {
+	u, err := gounity.NewUnity(*mgmtIp, *username, *password, true)
+	assert.Nilf(t, err, "cannot connect to unity: %v", *mgmtIp)
+
+	portals, err := u.GetIscsiPortals()
+	assert.Nil(t, err, "get all iscsi portals failed")
+
+	portal := portals[0]
+	assert.Equal(t, "if_3", portal.Id)
+	assert.Equal(t, "10.245.47.95", portal.IpAddress)
+	assert.Equal(t, "iqn.1992-04.com.emc:cx.fnm00150600267.a0", portal.IscsiNode.Name)
 }

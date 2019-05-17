@@ -63,6 +63,10 @@ type UnityConnector interface {
 		typeName, action string, body map[string]interface{},
 	) (string, error)
 
+	CreateOnType(
+		typeName string, body map[string]interface{}, resp interface{},
+	) error
+
 	PostOnInstance(
 		typeName, resId, action string, body map[string]interface{},
 	) error
@@ -75,6 +79,8 @@ type UnityConnector interface {
 
 	LunOperatorGen
 
+	SnapOperatorGen
+
 	HostOperatorGen
 
 	HostLUNOperator
@@ -84,6 +90,12 @@ type UnityConnector interface {
 	FilesystemOperatorGen
 
 	NfsShareOperatorGen
+
+	EthernetPortOperatorGen
+
+	IscsiNodeOperatorGen
+
+	IscsiPortalOperatorGen
 }
 
 // Unity defines the connection to Unity system.
@@ -257,6 +269,26 @@ func (u *Unity) PostOnType(
 	}
 
 	return resp.Content.StorageResource.Id, nil
+}
+
+// CreateOnType sends POST request to create resource type.
+func (u *Unity) CreateOnType(
+	typeName string, body map[string]interface{}, resp interface{},
+) error {
+
+	msg := newMessage().withFields(
+		map[string]interface{}{
+			"typeName": typeName,
+			"body":     body,
+		},
+	)
+	if err := u.client.Post(
+		context.Background(), createTypeUrl(typeName), nil, body, resp,
+	); err != nil {
+		return errors.Wrapf(err, "post on type failed: %s", msg)
+	}
+
+	return nil
 }
 
 // PostOnInstance sends POST request on resource instance.

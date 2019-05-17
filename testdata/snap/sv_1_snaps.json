@@ -1,0 +1,384 @@
+{
+  "@base": "https://10.171.87.52/api/types/snap/instances?filter=lun.id eq \"sv_1\"&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess&per_page=2000&compact=true",
+  "updated": "2019-05-03T17:19:41.535Z",
+  "links": [
+    {
+      "rel": "self",
+      "href": "&page=1"
+    }
+  ],
+  "entries": [
+    {
+      "content": {
+        "id": "38654714567",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_09:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T09:00:01.283Z",
+        "expirationTime": "2019-05-03T17:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714595",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_10:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T10:00:01.914Z",
+        "expirationTime": "2019-05-03T18:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714625",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_11:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T11:00:01.707Z",
+        "expirationTime": "2019-05-03T19:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714652",
+        "creatorType": 1,
+        "state": 2,
+        "name": "UTC_2019-05-03_12:00:00_1",
+        "description": "",
+        "creationTime": "2019-05-03T12:00:02.780Z",
+        "expirationTime": "2019-05-03T17:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714655",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_12:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T12:00:01.646Z",
+        "expirationTime": "2019-05-03T20:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714682",
+        "creatorType": 1,
+        "state": 2,
+        "name": "UTC_2019-05-03_13:00:00_1",
+        "description": "",
+        "creationTime": "2019-05-03T13:00:02.477Z",
+        "expirationTime": "2019-05-03T18:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714685",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_13:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T13:00:01.539Z",
+        "expirationTime": "2019-05-03T21:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714712",
+        "creatorType": 1,
+        "state": 2,
+        "name": "UTC_2019-05-03_14:00:00_1",
+        "description": "",
+        "creationTime": "2019-05-03T14:00:02.331Z",
+        "expirationTime": "2019-05-03T19:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714715",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_14:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T14:00:01.608Z",
+        "expirationTime": "2019-05-03T22:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714741",
+        "creatorType": 1,
+        "state": 2,
+        "name": "UTC_2019-05-03_15:00:00",
+        "description": "",
+        "creationTime": "2019-05-03T15:00:01.869Z",
+        "expirationTime": "2019-05-03T20:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714745",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_15:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T15:00:02.011Z",
+        "expirationTime": "2019-05-03T23:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714770",
+        "creatorType": 1,
+        "state": 2,
+        "name": "UTC_2019-05-03_16:00:00",
+        "description": "",
+        "creationTime": "2019-05-03T16:00:01.882Z",
+        "expirationTime": "2019-05-03T21:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714772",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_16:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T16:00:02.059Z",
+        "expirationTime": "2019-05-04T00:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714800",
+        "creatorType": 1,
+        "state": 2,
+        "name": "UTC_2019-05-03_17:00:00",
+        "description": "",
+        "creationTime": "2019-05-03T17:00:02.777Z",
+        "expirationTime": "2019-05-03T22:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714803",
+        "creatorType": 9,
+        "state": 2,
+        "name": "UTC_2019-05-03_17:00:00_VIRT19132R5N2K",
+        "description": "",
+        "creationTime": "2019-05-03T17:00:01.704Z",
+        "expirationTime": "2019-05-04T01:00:01.000Z",
+        "isSystemSnap": false,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": false,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714808",
+        "creatorType": 9,
+        "state": 2,
+        "name": "42949673014_VIRT1913KYQK58_0000.ckpt000_4110004946536784.2_61",
+        "description": "",
+        "creationTime": "2019-04-25T16:00:45.711Z",
+        "isSystemSnap": true,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": true,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    },
+    {
+      "content": {
+        "id": "38654714810",
+        "creatorType": 9,
+        "state": 2,
+        "name": "42949673014_VIRT1913KYQK58_0000.ckpt000_4110004946479320.1_61",
+        "description": "",
+        "creationTime": "2019-04-25T16:00:45.523Z",
+        "isSystemSnap": true,
+        "isModifiable": false,
+        "isReadOnly": true,
+        "isModified": true,
+        "size": 107374182400,
+        "storageResource": {
+          "id": "sv_1"
+        },
+        "lun": {
+          "id": "sv_1"
+        }
+      }
+    }
+  ]
+}
