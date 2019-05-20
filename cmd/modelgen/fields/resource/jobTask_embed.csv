@@ -3,7 +3,7 @@ description,string
 object,string
 action,string
 state,JobTaskStateEnum
-messages,[]string
+messages,[]*JobMessage
 steps,[]*JobTask
 parametersIn,string
 parametersOut,string

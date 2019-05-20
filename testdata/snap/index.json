@@ -47,6 +47,20 @@
       "url": "/api/instances/snap/38654714770/action/detach",
       "body": {},
       "response": "snap_1_attach.json"
+    },
+    {
+      "url": "/api/instances/snap/38654714905/action/attach",
+      "body": {
+        "hostAccess": [
+          {
+            "allowedAccess": 1,
+            "host": {
+              "id": "Host_1"
+            }
+          }
+        ]
+      },
+      "response": "snap_1_attach.json"
     }
   ]
 }
