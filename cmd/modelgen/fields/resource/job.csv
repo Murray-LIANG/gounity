@@ -1,0 +1,17 @@
+id,string
+description,string
+state,JobStateEnum
+stateChangeTime,string
+submitTime,string
+startTime,string
+endTime,string
+elapsedTime,string
+estRemainTime,string
+progressPct,uint16
+tasks,[]*JobTask
+parametersOut,string
+messageOut,*Message
+isJobCancelable,bool
+isJobCancelled,bool
+clientData,string
+affectedResource,*AffectedResource

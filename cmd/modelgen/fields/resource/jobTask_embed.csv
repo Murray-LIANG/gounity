@@ -1,0 +1,12 @@
+name,string
+description,string
+object,string
+action,string
+state,JobTaskStateEnum
+messages,[]string
+steps,[]*JobTask
+parametersIn,string
+parametersOut,string
+submitTime,string
+startTime,string
+affectedResource,*AffectedResource
