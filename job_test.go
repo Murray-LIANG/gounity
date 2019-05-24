@@ -1,8 +1,8 @@
 package gounity_test
 
 import (
-	"github.com/Murray-LIANG/gounity"
-	"github.com/Murray-LIANG/gounity/testutil"
+	"github.com/factioninc/gounity"
+	"github.com/factioninc/gounity/testutil"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

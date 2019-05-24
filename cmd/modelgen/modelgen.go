@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Murray-LIANG/gounity/cmd/modelgen/pkg"
+	"github.com/factioninc/gounity/cmd/modelgen/pkg"
 	"github.com/sirupsen/logrus"
 )
 

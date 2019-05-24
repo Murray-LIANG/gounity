@@ -1,4 +1,4 @@
-module github.com/Murray-LIANG/gounity
+module github.com/factioninc/gounity
 
 go 1.12
 

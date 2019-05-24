@@ -3,7 +3,7 @@ package gounity_test
 import (
 	"testing"
 
-	"github.com/Murray-LIANG/gounity/testutil"
+	"github.com/factioninc/gounity/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
