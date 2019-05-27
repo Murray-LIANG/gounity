@@ -1,0 +1,6 @@
+severity,SeverityEnum
+errorCode,uint32
+created,string
+httpStatusCode,uint32
+messages,[]*LocalizedMessage
+messageArgs,[]string

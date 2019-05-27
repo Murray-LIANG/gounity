@@ -96,6 +96,8 @@ type UnityConnector interface {
 	IscsiNodeOperatorGen
 
 	IscsiPortalOperatorGen
+
+	JobOperatorGen
 }
 
 // Unity defines the connection to Unity system.

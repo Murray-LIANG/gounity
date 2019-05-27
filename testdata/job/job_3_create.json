@@ -1,0 +1,13 @@
+{
+  "@base": "https://10.171.87.52/api/instances/job",
+  "updated": "2019-05-17T17:32:17.359Z",
+  "links": [
+    {
+      "rel": "self",
+      "href": "/36674839992"
+    }
+  ],
+  "content": {
+    "id": "36674839992"
+  }
+}

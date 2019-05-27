@@ -63,3 +63,32 @@ SnapAccessLevelEnum:
 IpProtocolVersionEnum:
   4: [IPv4, Network interface uses IPv4 address.]
   6: [IPv6, Network interface uses IPv6 address.]
+
+JobStateEnum:
+  1: [Queued, Job is queued to run.]
+  2: [Running, Job is running.]
+  3: [Suspended, Job is suspended.]
+  4: [Completed, Job completed successfully.]
+  5: [Failed, Job is failed, interrupted or terminated.]
+  6: [Rolling_Back, Job has failed and is attempting to roll back.]
+  7: [Completed_With_Problems, Job ran to the end, but a task returned an error.]
+
+JobTaskStateEnum:
+  0: [Not_Started, Job task is waiting to run.]
+  1: [Running, Job task is running.]
+  2: [Completed, Job task completed successfully.]
+  3: [Failed, Job task failed.]
+  4: [Rolling_Back, Job task is rolling back.]
+  5: [Completed_With_Problems, Job ran to the end, but a task returned an error.]
+  6: [Suspended, Job is suspended.]
+
+SeverityEnum:
+  8: [OK, OK]
+  7: [DEBUG, debug]
+  6: [INFO, information]
+  5: [NOTICE, Notice]
+  4: [WARNING, Warning]
+  3: [ERROR, Error]
+  2: [CRITICAL, Critical]
+  1: [ALERT, Alert]
+  0: [EMERGENCY, Emergency]
