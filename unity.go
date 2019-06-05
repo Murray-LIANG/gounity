@@ -98,6 +98,8 @@ type UnityConnector interface {
 	IscsiPortalOperatorGen
 
 	JobOperatorGen
+
+	HostIPPortOperatorGen
 }
 
 // Unity defines the connection to Unity system.
