@@ -68,7 +68,7 @@ type UnityConnector interface {
 	) error
 
 	PostOnInstance(
-		typeName, resId, action string, body map[string]interface{},
+		typeName, resId, action string, body map[string]interface{}, resp interface{},
 	) error
 
 	DeleteInstance(resType, id string) error
@@ -297,7 +297,7 @@ func (u *Unity) CreateOnType(
 
 // PostOnInstance sends POST request on resource instance.
 func (u *Unity) PostOnInstance(
-	typeName, resId, action string, body map[string]interface{},
+	typeName, resId, action string, body map[string]interface{}, resp interface{},
 ) error {
 
 	msg := newMessage().withFields(
@@ -308,8 +308,9 @@ func (u *Unity) PostOnInstance(
 			"body":     body,
 		},
 	)
+	url := postInstanceUrl(typeName, resId, action)
 	if err := u.client.Post(
-		context.Background(), postInstanceUrl(typeName, resId, action), nil, body, nil,
+		context.Background(), url, nil, body, resp,
 	); err != nil {
 		return errors.Wrapf(err, "post on instance failed: %s", msg)
 	}

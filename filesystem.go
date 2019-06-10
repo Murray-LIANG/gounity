@@ -43,7 +43,7 @@ func (fs *Filesystem) ExportNfsShare(
 
 	log.Debug("exporting nfs share")
 	err := fs.Unity.PostOnInstance(
-		typeStorageResource, fs.StorageResource.Id, actionModifyFilesystem, body,
+		typeStorageResource, fs.StorageResource.Id, actionModifyFilesystem, body, nil,
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "export nfs share failed: %s", msg)

@@ -63,7 +63,8 @@ func TestSnap_AttachToHost(t *testing.T) {
 
 	host := ctx.Unity.NewHostById("Host_1")
 	assert.Nil(t, err)
-	err = snap.AttachToHost(host, gounity.SnapAccessLevelReadWrite)
+	id, err := snap.AttachToHost(host, gounity.SnapAccessLevelReadWrite)
+	assert.Equal(t, "N-Attach", id)
 	assert.Nil(t, err)
 }
 
@@ -73,6 +74,7 @@ func TestSnap_DetachFromHost(t *testing.T) {
 	defer ctx.TearDown()
 	snap, err := ctx.Unity.GetSnapById("38654714770")
 	assert.Nil(t, err)
-	err = snap.DetachFromHost()
+	id, err := snap.DetachFromHost()
+	assert.Equal(t, "N-Detach", id)
 	assert.Nil(t, err)
 }

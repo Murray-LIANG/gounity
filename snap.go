@@ -11,6 +11,10 @@ type createSnapshotResourceResp struct {
 	} `json:"content"`
 }
 
+type attachSnapshotResourceResp struct {
+	Id string `json:"id"`
+}
+
 func newCreateSnapshotBody(s *Snap, sr *StorageResource) map[string]interface{} {
 	body := map[string]interface{}{
 		"name":            s.Name,
@@ -63,7 +67,7 @@ func (s *Snap) Copy(copyName string) (*Snap, error) {
 
 	log.Debug("copying snapshot")
 	err := s.Unity.PostOnInstance(
-		typeNameSnap, s.Id, "copy", body,
+		typeNameSnap, s.Id, "copy", body, nil,
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "copying snapshot failed: %s", msg)
@@ -78,7 +82,7 @@ func (s *Snap) Copy(copyName string) (*Snap, error) {
 	return snap, err
 }
 
-func (s *Snap) AttachToHost(host *Host, access SnapAccessLevelEnum) error {
+func (s *Snap) AttachToHost(host *Host, access SnapAccessLevelEnum) (string, error) {
 	hostAccess := []interface{}{
 		map[string]interface{}{
 			"host":          *host.Repr(),
@@ -96,28 +100,30 @@ func (s *Snap) AttachToHost(host *Host, access SnapAccessLevelEnum) error {
 	msg := newMessage().withFields(fields)
 
 	log.Debug("attaching snapshot")
+	resp := &attachSnapshotResourceResp{}
 	err := s.Unity.PostOnInstance(
-		typeNameSnap, s.Id, "attach", body,
+		typeNameSnap, s.Id, "attach", body, resp,
 	)
 	if err != nil {
-		return errors.Wrapf(err, "attaching snapshot failed: %s", msg)
+		return "", errors.Wrapf(err, "attaching snapshot failed: %s", msg)
 	}
 
 	log.WithField("copySnapId", s.Id).Debug("Snapshot successfully attached")
-	return err
+	return resp.Id, nil
 }
 
-func (s *Snap) DetachFromHost() error {
+func (s *Snap) DetachFromHost() (string, error) {
 	body := map[string]interface{}{}
 
 	logrus.Debug("detaching snapshot")
+	resp := &attachSnapshotResourceResp{}
 	err := s.Unity.PostOnInstance(
-		typeNameSnap, s.Id, "detach", body,
+		typeNameSnap, s.Id, "detach", body, resp,
 	)
 	if err != nil {
-		return errors.Wrapf(err, "detaching snapshot failed: %s", err)
+		return "", errors.Wrapf(err, "detaching snapshot failed: %s", err)
 	}
 
 	logrus.WithField("snapId", s.Id).Debug("Snapshot successfully attached")
-	return err
+	return resp.Id, nil
 }
