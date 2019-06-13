@@ -13,3 +13,5 @@ isModified,bool
 state,SnapStateEnum
 size,uint64
 hostAccess,[]*SnapHostAccess
+
+__DeleteDirectly__
