@@ -208,16 +208,7 @@ func (r *Snap) Repr() *idRepresent {
 // Delete deletes a snap object.
 func (r *Snap) Delete() error {
 
-	log := logrus.WithField("snap", r)
-	if r.StorageResource == nil {
-		log.Info("refreshing snap from unity")
-		err := r.Refresh()
-		if err != nil {
-			return errors.Wrap(err, "refresh snap from unity failed")
-		}
-	}
-
-	err := r.Unity.DeleteInstance(typeStorageResource, r.StorageResource.Id)
+	err := r.Unity.DeleteInstance("snap", r.Id)
 	if err != nil {
 		return errors.Wrap(err, "delete snap from unity failed")
 	}
