@@ -20,6 +20,7 @@ type resource struct {
 	fieldNames     []string
 	fields         []field
 	isEmbedded     bool
+	metadata       []string
 }
 
 type field struct {
@@ -53,6 +54,7 @@ func (r *resource) parseFields() *resource {
 	}
 	defer f.Close()
 
+	metadata := []string{}
 	fieldNames := []string{}
 	fields := []field{}
 
@@ -73,6 +75,12 @@ func (r *resource) parseFields() *resource {
 			log.WithField("line", line).Info("empty line")
 			continue
 		}
+
+		if strings.HasPrefix(parts[0], "__") && strings.HasSuffix(parts[0], "__") {
+			metadata = append(metadata, parts[0])
+			continue
+		}
+
 		fieldNames = append(fieldNames, parts[0])
 		if len(parts) == 1 {
 			log.WithField("line", line).Info(
@@ -96,6 +104,7 @@ func (r *resource) parseFields() *resource {
 	}
 	r.fieldNames = fieldNames
 	r.fields = fields
+	r.metadata = metadata
 
 	logrus.Infof("modelgen: resource %s parsed", r.typeName)
 	return r
@@ -117,6 +126,7 @@ func (r *resource) PrepareData() interface{} {
 		IsEmbedded              bool
 		HasNameField            bool
 		HasStorageResourceField bool
+		DeleteDirectly          bool
 	}{
 		time.Now().UTC(),
 		r.packageName,
@@ -127,6 +137,7 @@ func (r *resource) PrepareData() interface{} {
 		r.isEmbedded,
 		contains(r.fieldNames, "name"),
 		contains(r.fieldNames, "storageResource"),
+		contains(r.metadata, "__DeleteDirectly__"),
 	}
 }
 
