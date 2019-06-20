@@ -54,7 +54,7 @@ func (j *Job) Cancel() error {
 
 	logrus.Debug("cancel job")
 	err := j.Unity.PostOnInstance(
-		typeNameJob, j.Id, "cancel", body,
+		typeNameJob, j.Id, "cancel", body, nil,
 	)
 
 	if err != nil {
@@ -70,7 +70,7 @@ func (j *Job) Delete() error {
 
 	logrus.Debug("delete job")
 	err := j.Unity.PostOnInstance(
-		typeNameJob, j.Id, "delete", body,
+		typeNameJob, j.Id, "delete", body, nil,
 	)
 
 	if err != nil {

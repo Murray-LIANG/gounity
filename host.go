@@ -44,7 +44,7 @@ func (h *Host) Attach(lun *Lun) (uint16, error) {
 
 	log.Debug("attaching lun to host")
 	if err := h.Unity.PostOnInstance(
-		typeStorageResource, lun.Id, actionModifyLun, body,
+		typeStorageResource, lun.Id, actionModifyLun, body, nil,
 	); err != nil {
 		return 0, errors.Wrapf(err, "attach lun to host failed: %s", msg)
 	}
@@ -97,7 +97,7 @@ func (h *Host) Detach(lun *Lun) error {
 
 	log.Debug("detaching lun from host")
 	if err := h.Unity.PostOnInstance(
-		typeStorageResource, lun.Id, actionModifyLun, body,
+		typeStorageResource, lun.Id, actionModifyLun, body, nil,
 	); err != nil {
 		return errors.Wrapf(err, "detach lun from host failed: %s", msg)
 	}

@@ -104,10 +104,14 @@ func createTypeUrl(typeName string) string {
 }
 
 func postInstanceUrl(typeName, resId, action string) string {
-	return strings.Join(
+	joinPath := strings.Join(
 		[]string{pathAPIInstances, typeName, resId, "action", action},
 		"/",
 	)
+	if action == "attach" || action == "detach" {
+		return strings.Join([]string{joinPath, "timeout=1"}, "?")
+	}
+	return joinPath
 }
 
 func deleteInstanceUrl(typeName, resId string) string {

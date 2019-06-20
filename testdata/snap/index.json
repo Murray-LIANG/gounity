@@ -34,7 +34,7 @@
       "response": "snap_1_copy.json"
     },
     {
-      "url": "/api/instances/snap/38654714770/action/attach",
+      "url": "/api/instances/snap/38654714770/action/attach?timeout=1",
       "body": {
         "hostAccess": [{
           "host": {"id": "Host_1"},
@@ -44,12 +44,12 @@
       "response": "snap_1_attach.json"
     },
     {
-      "url": "/api/instances/snap/38654714770/action/detach",
+      "url": "/api/instances/snap/38654714770/action/detach?timeout=1",
       "body": {},
-      "response": "snap_1_attach.json"
+      "response": "snap_1_detach.json"
     },
     {
-      "url": "/api/instances/snap/38654714905/action/attach",
+      "url": "/api/instances/snap/38654714905/action/attach?timeout=1",
       "body": {
         "hostAccess": [
           {
