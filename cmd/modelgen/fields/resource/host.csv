@@ -3,3 +3,4 @@ name,string
 health,*Health
 description,string
 osType,string
+hostIPPorts,[]*HostIPPort

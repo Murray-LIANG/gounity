@@ -1,19 +1,19 @@
 {
   "indices": [
     {
-      "url": "/api/types/snap/instances?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess&filter=lun.id eq \"sv_1\"",
+      "url": "/api/types/snap/instances?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,isAutoDelete,state,size,hostAccess&filter=lun.id eq \"sv_1\"",
       "response": "sv_1_snaps.json"
     },
     {
-      "url": "/api/instances/snap/38654714770?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess",
+      "url": "/api/instances/snap/38654714770?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,isAutoDelete,state,size,hostAccess",
       "response": "snap_1.json"
     },
     {
-      "url": "/api/instances/snap/name:new_snap?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess",
+      "url": "/api/instances/snap/name:new_snap?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,isAutoDelete,state,size,hostAccess",
       "response": "snap_2.json"
     },
     {
-      "url": "/api/instances/snap/38654714905?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,state,size,hostAccess",
+      "url": "/api/instances/snap/38654714905?compact=true&fields=id,name,description,storageResource,lun,creationTime,expirationTime,creatorType,isSystemSnap,isModifiable,isReadOnly,isModified,isAutoDelete,state,size,hostAccess",
       "response": "snap_2.json"
     },
     {
@@ -34,7 +34,7 @@
       "response": "snap_1_copy.json"
     },
     {
-      "url": "/api/instances/snap/38654714770/action/attach",
+      "url": "/api/instances/snap/38654714770/action/attach?timeout=1",
       "body": {
         "hostAccess": [{
           "host": {"id": "Host_1"},
@@ -44,8 +44,22 @@
       "response": "snap_1_attach.json"
     },
     {
-      "url": "/api/instances/snap/38654714770/action/detach",
+      "url": "/api/instances/snap/38654714770/action/detach?timeout=1",
       "body": {},
+      "response": "snap_1_detach.json"
+    },
+    {
+      "url": "/api/instances/snap/38654714905/action/attach?timeout=1",
+      "body": {
+        "hostAccess": [
+          {
+            "allowedAccess": 1,
+            "host": {
+              "id": "Host_1"
+            }
+          }
+        ]
+      },
       "response": "snap_1_attach.json"
     },
     {

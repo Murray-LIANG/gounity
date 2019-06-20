@@ -11,6 +11,7 @@
     "isModifiable": false,
     "isReadOnly": true,
     "isModified": false,
+    "isAutoDelete": true,
     "size": 107374182400,
     "storageResource": {
       "id": "sv_1"

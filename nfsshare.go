@@ -32,7 +32,7 @@ func (r *NfsShare) Delete() error {
 
 	log.Debug("deleting nfs share")
 	err := r.Unity.PostOnInstance(
-		typeStorageResource, r.Filesystem.StorageResource.Id, actionModifyFilesystem, body,
+		typeStorageResource, r.Filesystem.StorageResource.Id, actionModifyFilesystem, body, nil,
 	)
 	if err != nil {
 		return errors.Wrapf(err, "delete nfs share failed: %s", msg)

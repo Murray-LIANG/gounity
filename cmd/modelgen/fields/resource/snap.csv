@@ -10,6 +10,7 @@ isSystemSnap,bool
 isModifiable,bool
 isReadOnly,bool
 isModified,bool
+isAutoDelete,bool
 state,SnapStateEnum
 size,uint64
 hostAccess,[]*SnapHostAccess

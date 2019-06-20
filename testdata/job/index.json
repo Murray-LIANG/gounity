@@ -1,0 +1,45 @@
+{
+  "indices": [
+    {
+      "url": "/api/types/job/instances",
+      "body": {
+        "description": "description",
+        "tasks": [
+          {
+            "Unity": null,
+            "name": "task",
+            "description": "",
+            "submitTime": "",
+            "startTime": "",
+            "object": "",
+            "action": "",
+            "dependencies": []
+          }
+        ]
+      },
+      "response": "job_3_create.json"
+    },
+    {
+      "url": "/api/instances/job/7455367723?compact=true&fields=id,description,state,stateChangeTime,submitTime,startTime,endTime,elapsedTime,estRemainTime,progressPct,tasks,parametersOut,messageOut,isJobCancelable,isJobCancelled,clientData,affectedResource",
+      "response": "job_1.json"
+    },
+    {
+      "url": "/api/instances/job/36674839992?compact=true&fields=id,description,state,stateChangeTime,submitTime,startTime,endTime,elapsedTime,estRemainTime,progressPct,tasks,parametersOut,messageOut,isJobCancelable,isJobCancelled,clientData,affectedResource",
+      "response": "job_3_create.json"
+    },
+    {
+      "url": "/api/instances/job/7455367723/action/cancel",
+      "body": {},
+      "response": "job_2_cancel.json"
+    },
+    {
+      "url": "/api/instances/job/7455362334?compact=true&fields=id,description,state,stateChangeTime,submitTime,startTime,endTime,elapsedTime,estRemainTime,progressPct,tasks,parametersOut,messageOut,isJobCancelable,isJobCancelled,clientData,affectedResource",
+      "response": "job_2.json"
+    },
+    {
+      "url": "/api/instances/job/7455362334/action/delete",
+      "body": {},
+      "response": "job_2_delete.json"
+    }
+  ]
+}

@@ -14,11 +14,12 @@ import (
 type Host struct {
 	Resource
 
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Health      *Health `json:"health"`
-	Description string  `json:"description"`
-	OsType      string  `json:"osType"`
+	Id          string        `json:"id"`
+	Name        string        `json:"name"`
+	Health      *Health       `json:"health"`
+	Description string        `json:"description"`
+	OsType      string        `json:"osType"`
+	HostIPPorts []*HostIPPort `json:"hostIPPorts"`
 }
 
 var (
@@ -29,6 +30,7 @@ var (
 		"health",
 		"description",
 		"osType",
+		"hostIPPorts",
 	}, ",")
 )
 

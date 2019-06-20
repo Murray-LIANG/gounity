@@ -26,6 +26,7 @@ type Snap struct {
 	IsModifiable    bool                `json:"isModifiable"`
 	IsReadOnly      bool                `json:"isReadOnly"`
 	IsModified      bool                `json:"isModified"`
+	IsAutoDelete    bool                `json:"isAutoDelete"`
 	State           SnapStateEnum       `json:"state"`
 	Size            uint64              `json:"size"`
 	HostAccess      []*SnapHostAccess   `json:"hostAccess"`
@@ -46,6 +47,7 @@ var (
 		"isModifiable",
 		"isReadOnly",
 		"isModified",
+		"isAutoDelete",
 		"state",
 		"size",
 		"hostAccess",
