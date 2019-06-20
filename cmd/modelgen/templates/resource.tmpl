@@ -183,6 +183,9 @@ func (r *{{ .CapTypeName }}) Repr() *idRepresent {
 // Delete deletes a {{ .TypeName }} object.
 func (r *{{ .CapTypeName }}) Delete() error {
 
+	{{ if .DeleteDirectly }}
+	err := r.Unity.DeleteInstance("{{ .TypeName }}", r.Id)
+	{{ else }}
 	log := logrus.WithField("{{ .TypeName }}", r)
 	if r.StorageResource == nil {
 		log.Info("refreshing {{ .TypeName }} from unity")
@@ -193,6 +196,7 @@ func (r *{{ .CapTypeName }}) Delete() error {
 	}
 
 	err := r.Unity.DeleteInstance(typeStorageResource, r.StorageResource.Id)
+	{{ end }}
 	if err != nil {
 		return errors.Wrap(err, "delete {{ .TypeName }} from unity failed")
 	}

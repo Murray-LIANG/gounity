@@ -78,3 +78,15 @@ func TestSnap_DetachFromHost(t *testing.T) {
 	assert.Equal(t, "N-Detach", id)
 	assert.Nil(t, err)
 }
+
+func TestSnapDelete(t *testing.T) {
+	ctx, err := testutil.NewTestContext()
+	assert.Nil(t, err, "failed to setup rest client to mock server")
+	defer ctx.TearDown()
+
+	snap := ctx.Unity.NewSnapById("38654714770")
+	assert.Nil(t, err)
+
+	err = snap.Delete()
+	assert.Nil(t, err)
+}
